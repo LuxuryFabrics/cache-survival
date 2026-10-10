@@ -1,0 +1,969 @@
+[
+  {
+    "id": "priorities-rule-of-threes",
+    "title": "Survival priorities and the rule of threes",
+    "category": "general",
+    "source": "CACHE original field notes (CC0). Conservative; not a substitute for training.",
+    "license": "CC0",
+    "tags": [
+      "priorities",
+      "planning",
+      "rule of threes"
+    ],
+    "body": "In a sudden emergency, stop moving. Breathe. Look. Then work in this order unless a more urgent threat is obvious:\n\n1. Immediate danger \u2014 traffic, fire, falling rock, rising water, hostile animals, gunfire. Leave the kill zone.\n2. Massive bleeding \u2014 pack and press, or apply a tourniquet high and tight on a limb. A person can bleed out in minutes.\n3. Airway and breathing \u2014 open the airway, treat a sucking chest wound, remove from smoke.\n4. Shelter from the environment \u2014 hypothermia and hyperthermia kill faster than hunger.\n5. Water \u2014 plan the next drink before you are thirsty, but do not drink untreated surface water out of panic.\n6. Signaling and location \u2014 make yourself findable while you still have energy.\n7. Food \u2014 last. Healthy adults tolerate days without calories far better than a night of wet wind.\n\nThe \u201crule of threes\u201d is a memory aid, not physics: roughly three minutes without air, three hours in harsh exposure, three days without water, three weeks without food. Cold water, altitude, injury, and children compress those numbers.\n\nMake a tiny plan you can finish: \u201cI will move 50 meters to that rock band, put on the rain layer, and blow the whistle in sets of three.\u201d Finish it. Then make the next plan. Panic is a plan to waste heat and water.",
+    "updatedAt": "2026-01-01"
+  },
+  {
+    "id": "stop-think-observe-plan",
+    "title": "STOP: stop, think, observe, plan",
+    "category": "general",
+    "source": "Adapted from U.S. Army Field Manual public-domain doctrine (U.S. Government work).",
+    "license": "US Government public domain",
+    "tags": [
+      "stop",
+      "lost",
+      "planning"
+    ],
+    "body": "When you realize you are lost or the plan has failed, sit down if the site is safe. The Army lost-person method is STOP.\n\nStop. Do not \u201cwalk one more ridge.\u201d Most lost walkers enlarge the search area and leave the last point a rescuer can predict.\n\nThink. What was the last known position? What time is it? Who knows your plan? What is the weather doing in the next six hours?\n\nObserve. Terrain, weather, injuries, remaining daylight, clothing, water, signaling tools, morale of the group. Inventory pockets. A trash bag is a vapor barrier. A mirror or phone screen is a signal.\n\nPlan. Choose a tactic: stay and signal if you are on a route someone will search; move only if the current site will kill you (flood, exposure, rockfall) or if a short, certain move reaches water, cover, or a linear feature (road, river, power line) you can follow.\n\nStay together. Mark the sit-down point. If you must move, leave a note and arrows. Travel in short legs to obvious attack points. When in doubt, stay put and improve shelter and signal.",
+    "updatedAt": "2026-01-01"
+  },
+  {
+    "id": "march-bleeding",
+    "title": "Massive bleeding: MARCH and tourniquets",
+    "category": "medical",
+    "source": "Adapted from U.S. military TCCC / public-domain first-aid doctrine + CACHE notes.",
+    "license": "US Government public domain + CC0",
+    "tags": [
+      "bleed",
+      "tourniquet",
+      "march",
+      "wound"
+    ],
+    "body": "MARCH is a field order of work for trauma: Massive hemorrhage, Airway, Respiration, Circulation, Hypothermia / Head.\n\nMassive bleeding first. Blood on the ground, spurting, or a soaked limb is a now problem.\n\nLimb bleeds: apply a manufactured tourniquet 2\u20133 inches above the wound, never on a joint, tighten until bleeding stops and the distal pulse is gone. Note the time. A second tourniquet above the first if it fails. Improvised windlass tourniquets fail often \u2014 use them only if nothing else exists and tighten with a sturdy rod.\n\nJunctional bleeds (groin, axilla, neck): pack with gauze or clean cloth and press with your entire body weight. Do not let up to \u201ccheck\u201d every few seconds. Hold at least 10 minutes by the clock.\n\nDo not make a wound map with your fingers. Do not remove embedded objects. Do not use a belt loosely as a decoration \u2014 it must occlude arterial flow or it is just a souvenir.\n\nAfter bleeding stops: airway, then seal an open chest wound with a vented chest seal if trained, then keep the person warm. Trauma plus cold is a clotting disaster.\n\nThis is field first aid, not a hospital. Evacuate any tourniquet, penetrating trauma, or uncontrolled bleed.",
+    "updatedAt": "2026-01-01"
+  },
+  {
+    "id": "airway-cpr",
+    "title": "Airway, choking, and CPR limits in the field",
+    "category": "medical",
+    "source": "Adapted from CDC public-domain health guidance (U.S. Government work).",
+    "license": "US Government public domain",
+    "tags": [
+      "airway",
+      "cpr",
+      "choking"
+    ],
+    "body": "If a person is talking, the airway is open enough for now. If they are silent, cyanotic, or making high-pitched efforts, act.\n\nChoking, responsive adult: stand behind, fist above the navel, inward and upward thrusts (Heimlich) until the object comes out or they go unresponsive. For infants, alternate 5 back blows and 5 chest thrusts.\n\nUnresponsive: call for help, lower to the ground, begin CPR if you are trained. Field CPR without rapid defibrillation and advanced care has a poor outlook; still begin if you can continue until relieved, especially for drowning or lightning where the heart may restart.\n\nRecovery position for a breathing, unresponsive person with no spinal mechanism: on the side, airway open, so vomit drains.\n\nDo not practice \u201cfield tracheotomy.\u201d You will not improve an airway with a pocketknife.\n\nSuspected spine injury with a compromised airway: jaw-thrust if trained, move as a unit only as much as needed to breathe and to leave immediate danger.",
+    "updatedAt": "2026-01-01"
+  },
+  {
+    "id": "shock-hypothermia-combo",
+    "title": "Shock and the bleeding-cold spiral",
+    "category": "medical",
+    "source": "Adapted from U.S. Army Field Manual public-domain doctrine (U.S. Government work).",
+    "license": "US Government public domain",
+    "tags": [
+      "shock",
+      "hypothermia",
+      "trauma"
+    ],
+    "body": "Shock is inadequate perfusion. In the field you will see it after bleeding, burns, dehydration, anaphylaxis, or heart strain.\n\nSigns: pale, clammy, rapid weak pulse, anxiety then apathy, thirst, delayed cap refill.\n\nTreatment you can actually do: stop bleeding, keep flat if no breathing problem, elevate legs only if no pelvic/leg fracture suspicion and it does not worsen breathing, prevent heat loss (pad underneath first), sip water only if fully awake and not pending surgery for belly trauma.\n\nHypothermia and shock feed each other. A wet person on the ground in wind will not clot well. Strip wet clothing when you have a dry layer ready. Wrap in a vapor barrier (bag, tarp) over insulation. Warm at the chest and groin with body heat or warm (not hot) bottles. Do not rub frozen extremities. Do not give alcohol.\n\nEvacuate anyone who is getting sleepier, colder, or more confused.",
+    "updatedAt": "2026-01-01"
+  },
+  {
+    "id": "fractures-sprains",
+    "title": "Fractures, sprains, and splinting",
+    "category": "medical",
+    "source": "Adapted from U.S. Army Field Manual public-domain doctrine (U.S. Government work).",
+    "license": "US Government public domain",
+    "tags": [
+      "fracture",
+      "sprain",
+      "splint"
+    ],
+    "body": "You often cannot tell a bad sprain from a break. Treat the limb as broken if it is deformed, unstable, numb, or the person heard a crack and cannot bear weight.\n\nCheck circulation, sensation, and motion below the injury before and after you splint. If a limb is pulseless and deformed and you are trained, a gentle attempt to restore alignment may be justified before a long carry \u2014 otherwise splint as it lies.\n\nSplint principles: immobilize the joint above and below. Pad voids. Do not bury the toes or fingers \u2014 you need to recheck color. For a femur, traction splints are specialized; in haste, the other leg can be a splint if both are uninjured enough.\n\nOpen fracture: cover with clean dressing, do not shove bone back, control bleeding, evacuate.\n\nRICE is for stable sprains: rest, ice or cold creek water in a cloth, compression, elevation. A person who must walk out on a sprain needs a firm wrap and a shorter day, not heroics.",
+    "updatedAt": "2026-01-01"
+  },
+  {
+    "id": "burns-blisters",
+    "title": "Burns and hot-shelter injuries",
+    "category": "medical",
+    "source": "Adapted from CDC public-domain health guidance (U.S. Government work).",
+    "license": "US Government public domain",
+    "tags": [
+      "burn",
+      "blister",
+      "fire"
+    ],
+    "body": "Cool a thermal burn with clean room-temperature water for 10\u201320 minutes. Do not use grease, butter, toothpaste, or ice. Remove jewelry before swelling. Leave stuck clothing.\n\nCover loosely with a clean non-fluffy dressing. Do not pop large blisters on the trail if you can protect them. If they tear, keep the skin as a dressing and use a thin antibiotic ointment only if you already carry it and the person is not allergic.\n\nEvacuate: burns of the face, hands, feet, genitals; circumferential burns; electrical or chemical burns; burns over a large area; or any burn in a child plus smoke exposure.\n\nCarbon monoxide from stoves in tents is a silent burn of the brain. Any headache, nausea, or confusion in a sealed shelter: get into open air immediately.",
+    "updatedAt": "2026-01-01"
+  },
+  {
+    "id": "wound-cleaning",
+    "title": "Cleaning and closing wounds in the field",
+    "category": "medical",
+    "source": "Adapted from CDC public-domain health guidance (U.S. Government work).",
+    "license": "US Government public domain",
+    "tags": [
+      "wound",
+      "infection",
+      "irrigation"
+    ],
+    "body": "The best field antibiotic is volume: irrigate with the cleanest water you have. A zip bag with a pinhole makes a jet. Pick out obvious debris. Do not use alcohol or hydrogen peroxide as a bath \u2014 they damage tissue.\n\nClose only clean, fresh, low-tension cuts if you have steri-strips or a quality bandage and can watch for infection. Punctures, bites, and dirty wounds should stay open and get medical care.\n\nInfection signs: spreading redness, pus, fever, red streaks, increasing pain after day two. Start toward help early; field infections become systemic fast in hot weather.\n\nAnimal bites: irrigate copiously, do not suture in the field, and assume rabies risk from bats and many wild mammals until a clinician says otherwise.",
+    "updatedAt": "2026-01-01"
+  },
+  {
+    "id": "water-disinfection",
+    "title": "Field water: settle, filter, disinfect",
+    "category": "food-water",
+    "source": "Adapted from CDC public-domain health guidance (U.S. Government work).",
+    "license": "US Government public domain",
+    "tags": [
+      "water",
+      "boil",
+      "filter",
+      "chlorine"
+    ],
+    "body": "Assume every surface source is contaminated with feces. Clear-looking alpine water is not sterile.\n\nOrder of work:\n\n1. Choose the cleanest source: flowing, upstream of camps, away from carcasses and eddies of foam.\n2. Settle or prefilter cloudy water through a cloth. Chemicals and UV fail in silt.\n3. Kill or remove pathogens.\n\nBoil: a rolling boil for 1 minute (3 minutes above ~2,000 m / 6,500 ft) is the most reliable field method for microbes. It does not remove chemicals, fuel, or heavy metals.\n\nFilters: 0.1\u20130.3 micron hollow fiber removes protozoa and most bacteria. Many do not reliably remove viruses. In agricultural or dense human watersheds, add a chemical or UV step after filtering.\n\nChemicals: follow the product label. Chlorine dioxide is kinder to Cryptosporidium than plain bleach if you wait the full time (often 30 minutes to 4 hours). Household bleach (unscented, ~5\u20138% sodium hypochlorite) is a last resort \u2014 typical guidance is 2 drops per quart of clear water, 4 if cloudy, wait 30 minutes, should smell faintly of chlorine. Concentrations vary; when unsure, boil.\n\nNever drink seawater, urine, or blood as a water strategy. Distill seawater only if you have a real still and fuel.",
+    "updatedAt": "2026-01-01"
+  },
+  {
+    "id": "finding-water",
+    "title": "Finding water in dry country",
+    "category": "food-water",
+    "source": "Adapted from U.S. Army Field Manual public-domain doctrine (U.S. Government work).",
+    "license": "US Government public domain",
+    "tags": [
+      "water",
+      "desert",
+      "seep"
+    ],
+    "body": "Travel at cool hours. Ration sweat, not just water: cover skin, do not strip, rest in shade.\n\nSigns: converging animal trails, circling birds at dawn, green ribbons in a drainage, damp sand in an outside bend, bees, and cottonwoods or willows in the southwest.\n\nDig a seep in a dry wash at the lowest shady bend, not in the middle of a gravel bar. Let it cloud, then skim. Solar stills produce little water for the labor \u2014 a last resort, not a plan.\n\nDew: mop with a cloth at dawn from non-toxic plants, then wring. Do not lick unknown plants.\n\nAvoid alkaline flats and water that stinks of chemicals, has oily sheen that does not break, or sits below mine tailings. No filter fixes that.\n\nIf you have a map, treat every marked spring as possibly dry. Carry what the walk requires; do not bet the day on a blue dot.",
+    "updatedAt": "2026-01-01"
+  },
+  {
+    "id": "food-rationing",
+    "title": "Rationing food and what not to eat",
+    "category": "food-water",
+    "source": "CACHE original field notes (CC0). Conservative; not a substitute for training.",
+    "license": "CC0",
+    "tags": [
+      "food",
+      "ration",
+      "forage"
+    ],
+    "body": "Calories are morale and heat, not an emergency of the first 24 hours for a healthy adult. Search and shelter beat foraging.\n\nIf you must stretch food: eat small regular amounts, especially fats and carbs, rather than one feast. Keep protein with water \u2014 urea is a water cost.\n\nUniversal foraging rules:\n- Unknown plant = do not eat.\n- Unknown mushroom = do not eat. There is no kitchen test, silver-spoon test, or animal-ate-it test that works.\n- White and yellow berries are frequently toxic; red is not a safety color.\n- Umbel white flowers (parsley family) include deadly hemlocks. Do not forage this family in a crisis.\n- Avoid plants with milky sap unless you already know the species (some figs and lettuce relatives are exceptions; you will not sort them while hungry).\n- Inland fish from warm still water can carry parasites \u2014 cook thoroughly.\n\nThe universal edibility test takes many hours and still fails on delayed toxins (death cap). Do not use it for mushrooms or for plants you cannot identify.\n\nCook when you can. Many \u201cedible\u201d wild foods are only edible after boiling.",
+    "updatedAt": "2026-01-01"
+  },
+  {
+    "id": "shelter-site",
+    "title": "Shelter site selection",
+    "category": "shelter",
+    "source": "Adapted from U.S. Army Field Manual public-domain doctrine (U.S. Government work).",
+    "license": "US Government public domain",
+    "tags": [
+      "shelter",
+      "site",
+      "flood"
+    ],
+    "body": "A bad site makes a good tarp useless.\n\nAvoid: dry creek beds and debris-choked drainages (flash flood), isolated tall trees in lightning country, dead trees (\u201cwidowmakers\u201d), cornices and avalanche slopes, ant nests, game trails, and the very bottom of frost pockets.\n\nPrefer: level enough to sleep, slightly raised, morning sun in cold weather, shade and breeze in heat, a nearby but not immediate water source, and a backstop from wind (thicket, rock, small rise). Face the opening 90 degrees off the wind, not into it and not always directly downwind of a fire.\n\nIn snow, probe for hazards. Dig to a firm layer. Insulation under you matters more than a roof.\n\nGroup shelters save heat and watch shifts. They also spread illness \u2014 keep a sick person slightly separate if you have the fabric.\n\nLegal note on public land: emergency bivouacs are one thing; cutting live trees and building cabins is another. Use dead and down wood where allowed.",
+    "updatedAt": "2026-01-01"
+  },
+  {
+    "id": "hasty-shelters",
+    "title": "Hasty shelters: tarp, debris, snow",
+    "category": "shelter",
+    "source": "Adapted from U.S. Army Field Manual public-domain doctrine (U.S. Government work).",
+    "license": "US Government public domain",
+    "tags": [
+      "tarp",
+      "debris hut",
+      "snow"
+    ],
+    "body": "Tarp A-frame: ridgeline between two trees or trekking poles, 30\u201345 degree walls, plenty of groundhog stakes or rocks in heck-tucks. A closed back wall beats a pretty open wing in wind. Dig a small trench on the uphill side so runoff does not become your bed.\n\nTarp lean-to: fast with a fire in front. Only works if you have a reflector and the wind agrees. Sparks will own a nylon tarp.\n\nDebris hut: a rib cage of sticks, stuffed a meter thick with leaves or grass. It must look ridiculously overbuilt. Leave a small door plug. Labor-heavy; start before you are cold.\n\nSnow trench or quinzhee: insulation is excellent if you stay dry. Ventilation is mandatory. A candle that dims means get out. Never sleep under an unprobed snow roof after a warm day.\n\nGround insulation: 10 cm of dry debris, a closed-cell pad, or a pack under the torso. Hypothermia starts from the soil.\n\nClothing is shelter. Vent sweat on the move; add layers the moment you stop.",
+    "updatedAt": "2026-01-01"
+  },
+  {
+    "id": "fire-craft",
+    "title": "Fire: tinder, kindling, fuel, and safety",
+    "category": "fire",
+    "source": "Adapted from U.S. Army Field Manual public-domain doctrine (U.S. Government work).",
+    "license": "US Government public domain",
+    "tags": [
+      "fire",
+      "tinder",
+      "stove"
+    ],
+    "body": "Fire needs dry fuel in three sizes and oxygen. Prepare a full kit before the match.\n\nTinder: fatwood shavings, birch bark, inner cedar, cotton plus petroleum jelly, dryer lint stored dry, commercial tabs. Wet-wood \u201cfeather sticks\u201d from the dry core of a dead branch.\n\nKindling: pencil-thick dead twigs from standing wood, not the wet forest floor.\n\nFuel: split larger wood. A log on the ground is a sponge.\n\nStructure: teepee for a fast signal fire; log-cabin or lean-to for cooking. In wind, a trench fire. On snow, a green-wood or stone platform so the fire does not melt into a pit and drown.\n\nDo not kindle under snow-loaded branches. Do not kindle on peaty ground that can smolder underground. Drown, stir, drown, and feel with the back of the hand before you leave.\n\nCarbon monoxide: no charcoal or wood stove in an unvented tent. Melt snow for water near the door with ventilation, not in a sealed vestibule while you sleep.\n\nIf fire ban or extreme drought: use a stove on mineral soil and skip the campfire. Signaling can be a mirror and whistle instead.",
+    "updatedAt": "2026-01-01"
+  },
+  {
+    "id": "cold-weather",
+    "title": "Cold injury: hypothermia and frostbite",
+    "category": "climate",
+    "source": "Adapted from CDC public-domain health guidance (U.S. Government work).",
+    "license": "US Government public domain",
+    "tags": [
+      "cold",
+      "hypothermia",
+      "frostbite"
+    ],
+    "body": "Hypothermia is a dropping core temperature. Shivering, fumbling, mumbling, stumbling, then a false sense of warmth and a desire to lie down. The last two are an emergency.\n\nTreat: stop heat loss, get out of wind and wet, pad from the ground, add a vapor barrier, feed if fully awake (warm sweet drinks, calories), and add heat to the torso. A walking mildly hypothermic person can still generate heat. A collapsed person needs evacuation and careful handling \u2014 rough movement can trigger arrhythmia.\n\nFrostbite: pale, waxy, numb ears, nose, fingers, toes. Do not rub with snow. Do not thaw if the part will refreeze on the march \u2014 freeze-thaw-freeze destroys tissue. Thaw in warm water (~37\u201339 C) only when you can keep it thawed and the person can stay put. Protect blisters. Ibuprofen if they already use it and have no contraindication; this is not a complete treatment.\n\nPrevention: stay dry, cover skin, eat, buddy-check noses, loosen boots that cut circulation, and ventilate so sweat does not soak insulation.",
+    "updatedAt": "2026-01-01"
+  },
+  {
+    "id": "heat-illness",
+    "title": "Heat cramps, exhaustion, and stroke",
+    "category": "climate",
+    "source": "Adapted from CDC public-domain health guidance (U.S. Government work).",
+    "license": "US Government public domain",
+    "tags": [
+      "heat",
+      "stroke",
+      "dehydration"
+    ],
+    "body": "Heat cramps: salt and water, rest in shade, gentle stretch.\n\nHeat exhaustion: heavy sweat, nausea, headache, weakness, fast pulse. Shade, lie down, cool water on skin, sip fluids with some salt if they can keep it down. They should not walk a desert afternoon \u201cto the car.\u201d\n\nHeat stroke: hot person with confusion, collapse, or seizures \u2014 a true emergency. Sweating may be present or absent. Cool immediately: remove layers, soak, fan, ice at neck/armpits/groin if you have it. Evacuate. Do not wait for them to \u201csleep it off.\u201d\n\nPrevention: start earlier than pride allows, cover skin from sun, drink on a schedule, and add electrolytes if you are soaking shirts. Dark urine is late information. Children and the elderly cook faster in parked-car and tent-in-sun conditions.\n\nHyponatremia (too much plain water, too little salt) looks like heat illness and is worsened by forcing gallons. If someone is bloated, vomiting, and confused after huge water intake, stop the water and get medical care.",
+    "updatedAt": "2026-01-01"
+  },
+  {
+    "id": "navigation-compass",
+    "title": "Map and compass: bearing, declination, resection",
+    "category": "navigation",
+    "source": "Adapted from U.S. Army Field Manual public-domain doctrine (U.S. Government work).",
+    "license": "US Government public domain",
+    "tags": [
+      "compass",
+      "bearing",
+      "declination"
+    ],
+    "body": "A compass does not know where you are. It knows magnetic north. You must keep the map oriented and keep track.\n\nDeclination: the angle between magnetic north and true/grid north. Set it on the compass if it has an adjuster, or add/subtract every time. A 15 degree error is about 400 meters off in 1.5 km.\n\nTo walk a bearing: put the compass on the map from you to the target, rotate the housing to grid north, add declination as required, then hold the compass at your belly and walk to a picked object on that line. Repeat. Do not stare at the needle while you trip.\n\nResection (rough): identify two (better three) known features you can see, shoot back-bearings, draw them on the map; you are near the intersection. Terrain association \u2014 matching ridges and drainages \u2014 is faster when visibility is good.\n\nPace count: know your double-paces per 100 meters on flat, uphill, and night. Use beads or pebbles. Fatigue shortens pace.\n\nAt night or in fog, short legs to handrails (streams, ridges, roads) beat a 5 km heroic bearing.",
+    "updatedAt": "2026-01-01"
+  },
+  {
+    "id": "navigation-no-compass",
+    "title": "Direction without a compass",
+    "category": "navigation",
+    "source": "CACHE original field notes (CC0). Conservative; not a substitute for training.",
+    "license": "CC0",
+    "tags": [
+      "sun",
+      "stars",
+      "direction"
+    ],
+    "body": "These methods are crude. Use them to pick a cardinal direction, not to thread a boulder field.\n\nShadow-stick (day): plant a stick, mark the tip of the shadow, wait 15\u201320 minutes, mark again. The first to second mark runs west to east in most latitudes. A line perpendicular gives north-south.\n\nWatch method (analog): in the northern hemisphere, point the hour hand at the sun; south is halfway to 12 (or 1 during daylight time). Digital watches do not count.\n\nNight: Polaris is over true north, found via the two pointer stars of the Big Dipper. In the southern hemisphere, the Southern Cross points toward south with a bit of construction \u2014 learn it before you need it.\n\nMoss on trees is a rumor, not a method. Prevailing wind and satellite dishes are local gossip.\n\nIf you have a phone with a saved offline map but no GNSS, you can still orient the map to terrain. Last-known plus terrain is better than a guess.",
+    "updatedAt": "2026-01-01"
+  },
+  {
+    "id": "signaling-rescue",
+    "title": "Signaling: ground-to-air and sound",
+    "category": "signaling",
+    "source": "Adapted from U.S. Army Field Manual public-domain doctrine (U.S. Government work).",
+    "license": "US Government public domain",
+    "tags": [
+      "signal",
+      "whistle",
+      "mirror",
+      "sos"
+    ],
+    "body": "Three of anything is a distress pattern in many wilderness contexts: three whistle blasts, three fires, three flashes.\n\nWhistle: louder and cheaper than shouting. Carry one on the zipper. Blast, rest, blast.\n\nSignal mirror: aim the flash on your hand, then onto the aircraft or a far ridge. Practice before you need it. A phone screen can work poorly in weak sun.\n\nGround-to-air: large contrasting V, X, or SOS in an opening. X is a common \u201cneed help\u201d panel signal. Size matters \u2014 think many meters, not a stick in the dirt. Stay near the signal.\n\nFires: three in a triangle if fuel and law allow. Have tinder ready; light when you hear a bird, not after it has passed.\n\nColor and motion: a bright tarp waved, a laser (do not dazzle pilots on final), strobe at night.\n\nIf you have any radio or messenger, send a short message: who, how many, injuries, location (coordinates + description), and what you will do next. Then conserve battery. Do not spam.",
+    "updatedAt": "2026-01-01"
+  },
+  {
+    "id": "fema-kit",
+    "title": "Home and go-bag: FEMA-style kit",
+    "category": "disaster",
+    "source": "Adapted from FEMA public-domain preparedness guidance (U.S. Government work).",
+    "license": "US Government public domain",
+    "tags": [
+      "kit",
+      "go-bag",
+      "fema"
+    ],
+    "body": "FEMA\u2019s public guidance for household preparedness is boring and correct: water, food, light, comms, meds, documents, and a plan that someone else knows.\n\nWater: one gallon (4 L) per person per day, three days minimum at home, more in heat. Do not forget pets.\n\nFood: three days of no-cook calories you will actually eat. Manual can opener.\n\nLight and power: flashlight, extra batteries, headlamp. A small radio (hand-crank or battery) for public alerts when the phone network dies.\n\nMedical: a real first-aid kit plus 7 days of prescription meds if you can, glasses, and child/infant needs.\n\nSanitation: bags, bleach, soap, menstrual supplies.\n\nDocuments: paper copies of IDs, insurance, and a meeting place written down. Phones die and clouds vanish in a regional outage.\n\nGo-bag extras: sturdy shoes, weather layer, N95 or better if smoke/ash is a local risk, cash in small bills, and a paper map of your region.\n\nThis app does not replace a kit. It does replace the assumption that search will always work on the first afternoon.",
+    "updatedAt": "2026-01-01"
+  },
+  {
+    "id": "earthquake",
+    "title": "Earthquake: drop, cover, hold, then after",
+    "category": "disaster",
+    "source": "Adapted from FEMA public-domain preparedness guidance (U.S. Government work).",
+    "license": "US Government public domain",
+    "tags": [
+      "earthquake",
+      "aftershock"
+    ],
+    "body": "Indoors: drop, cover, hold on under a table or against an interior wall. Stay away from glass and tall furniture. Do not run outside through a facade of glass. Do not stand in a doorway as a plan \u2014 modern interior doorways are not magic.\n\nIn bed: stay, cover the head with a pillow, unless a heavy fixture can fall on you.\n\nOutdoors: move away from buildings, power lines, and overpasses.\n\nIn a car: pull over away from bridges and power lines, stay inside.\n\nAfter: expect aftershocks. Extinguish only small fires. Shut gas off only if you smell it or the meter says so and you know the valve \u2014 once off, utility must restore it. Do not use elevators. Check for downed lines. Text instead of call if networks are congested.\n\nTsunami country: if you feel a long quake, see the water recede, or hear an official siren, go to high ground on foot immediately. Do not wait for a push notification.",
+    "updatedAt": "2026-01-01"
+  },
+  {
+    "id": "flood-flash",
+    "title": "Flood and flash flood",
+    "category": "disaster",
+    "source": "Adapted from FEMA public-domain preparedness guidance (U.S. Government work).",
+    "license": "US Government public domain",
+    "tags": [
+      "flood",
+      "water",
+      "car"
+    ],
+    "body": "Turn around, don\u2019t drown. A short stretch of moving water can float a car. Two feet of water moves most sedans. Do not drive through barricades.\n\nOn foot, floodwater hides holes, debris, and sewage. If water is rising in a drainage at night, abandon gear and climb a side slope.\n\nAt home: move to higher floors with a go-bag if told to shelter. Do not go to the attic without an exit (axe, window). Shut power at the breaker if water is about to reach outlets and you can do so dry.\n\nAfter: assume contamination. Boil water until told otherwise. Do not run generators indoors or in garages \u2014 carbon monoxide. Document damage with photos when safe.\n\nCamp rule: never sleep in a beautiful flat wash because the sky is clear overhead. The storm can be 20 km upstream.",
+    "updatedAt": "2026-01-01"
+  },
+  {
+    "id": "wildfire",
+    "title": "Wildfire and smoke",
+    "category": "disaster",
+    "source": "Adapted from FEMA public-domain preparedness guidance (U.S. Government work).",
+    "license": "US Government public domain",
+    "tags": [
+      "fire",
+      "smoke",
+      "evac"
+    ],
+    "body": "If officials say leave, leave early. Embers travel ahead of the flame front and close roads.\n\nIf you are caught on foot: do not run uphill from a fire if you can flank to a road, river, or already-burned black. Avoid canyons that chimney. Cover the mouth with cloth. A last-ditch survival zone is a depression in already-burned ground, face down, airway protected \u2014 this is desperate, not a plan.\n\nVehicles: park off the road in a clear area, windows up, vents off, headlights on, get as low as possible. Metal and glass beat running through flame if you are already enveloped \u2014 still a last resort.\n\nSmoke: N95 or better, limit exertion, indoor air if you have it. Children and people with lungs/heart disease need to leave smoky valleys sooner.\n\nHouse: hose and sprinklers are not a stay-and-defend plan for untrained families. Close vents, remove doormats, and go.",
+    "updatedAt": "2026-01-01"
+  },
+  {
+    "id": "storm-lightning",
+    "title": "Severe storm and lightning",
+    "category": "disaster",
+    "source": "Adapted from FEMA public-domain preparedness guidance (U.S. Government work).",
+    "license": "US Government public domain",
+    "tags": [
+      "lightning",
+      "storm",
+      "tornado"
+    ],
+    "body": "Lightning: there is no safe place outside. Avoid ridges, isolated trees, open water, and metal fences. If caught, crouch on your pad with feet together, not lying flat, away from the tallest object. Spread a group out so one strike does not drop everyone. A person struck can be touched; start CPR if needed.\n\nThunderstorms in mountains often peak in the afternoon. Be off summits before they build.\n\nTornado: lowest floor, interior room, no windows. Overpasses are not shelters. In a vehicle, leave it for a ditch only if the tornado is upon you and there is no building.\n\nHurricane / cyclone: follow evacuation orders. Inland flooding and storm surge kill more than wind. After landfall, treat downed lines and chainsaw work as skilled jobs.\n\nHail and cold rain: hypothermia risk in summer alpine. Pack a hard-shell even on \u201cnice\u201d mornings.",
+    "updatedAt": "2026-01-01"
+  },
+  {
+    "id": "power-outage",
+    "title": "Grid-down at home: power and heat",
+    "category": "off-grid",
+    "source": "Adapted from FEMA public-domain preparedness guidance (U.S. Government work).",
+    "license": "US Government public domain",
+    "tags": [
+      "power",
+      "generator",
+      "outage"
+    ],
+    "body": "First hour: check on medically fragile people. Phones: one device on, the rest off. A battery pack beats a dead cluster of glowing screens.\n\nHeat in winter: close unused rooms, hang blankets over windows, wear layers, crack a window if you use any combustion. Never run a generator, grill, or camp stove in the house or garage. Carbon monoxide kills families every outage season.\n\nCooling in summer: shade, night flushing if outdoor air is cooler, drink water, check on elderly neighbors. A car with fuel can be a cooling shelter if you stay aware of carbon monoxide and fuel limits \u2014 not in a closed garage.\n\nFood: keep fridge closed. A full freezer holds ~48 hours if unopened; a fridge ~4 hours. When in doubt, throw out meat that warmed.\n\nWater: if the utility is down, the water heater tank is a reserve (shut incoming valve first). Toilet tank (not bowl) is another, if no chemical cleaner is in it.\n\nLight: headlamps keep hands free. Candles start house fires \u2014 use them in a metal pot or not at all.",
+    "updatedAt": "2026-01-01"
+  },
+  {
+    "id": "sanitation-hygiene",
+    "title": "Sanitation when the plumbing dies",
+    "category": "hygiene",
+    "source": "Adapted from CDC public-domain health guidance (U.S. Government work).",
+    "license": "US Government public domain",
+    "tags": [
+      "sanitation",
+      "waste",
+      "hygiene"
+    ],
+    "body": "Disease will outrun hunger in a crowded outage.\n\nHandwashing: soap and water still win. An alcohol rub needs clean-looking hands and enough volume to dry slowly.\n\nLatrine: 60+ meters from water and camp, 20+ cm deep cat-holes in small groups. For longer stays, a trench latrine downhill and downwind. Pack out paper in fragile ecosystems where required.\n\nBucket toilet: bag, absorb (sawdust, kitty litter), seal, store away from food. Do not dump bags in the river.\n\nMenstrual and child waste: plan the kit, not improvisation with a single cloth and no wash water.\n\nFood hygiene: boil, keep raw meat separate (or skip meat), and do not share unwashed bottles after a stomach bug. Oral rehydration: 1 liter clean water, 6 teaspoons sugar, 1/2 teaspoon salt \u2014 if you have the ingredients and the person is not vomiting uncontrollably. Seek care for bloody diarrhea, high fever, or a limp child.",
+    "updatedAt": "2026-01-01"
+  },
+  {
+    "id": "plants-poison-ivy",
+    "title": "Poison ivy, oak, and sumac",
+    "category": "plants-animals",
+    "source": "Adapted from CDC public-domain health guidance (U.S. Government work).",
+    "license": "US Government public domain",
+    "tags": [
+      "poison ivy",
+      "urushiol",
+      "rash"
+    ],
+    "body": "Leaves of three, let it be \u2014 a start, not a complete ID. Poison ivy and oak have three leaflets; poison sumac has rows of leaflets and lives in wet ground. Urushiol oil binds to skin in minutes.\n\nDo not burn the plant. Smoke carries the oil to lungs and eyes.\n\nIf exposed: rinse with soap and cold water as soon as you can. Rubbing alcohol or specialized wipes help if used early. Do not aggressively scrub with hot water (opens pores).\n\nClothes, tools, and dog fur hold oil. Wash them separately.\n\nRash is an immune reaction, often 12\u201348 hours later, and can look like streaks. Over-the-counter hydrocortisone and oral antihistamines are comfort only. Face, genitals, or severe swelling: medical care. Do not use home bleach on skin.",
+    "updatedAt": "2026-01-01"
+  },
+  {
+    "id": "snakes-bites",
+    "title": "Venomous snakebite field care",
+    "category": "plants-animals",
+    "source": "Adapted from CDC public-domain health guidance (U.S. Government work).",
+    "license": "US Government public domain",
+    "tags": [
+      "snake",
+      "bite",
+      "venom"
+    ],
+    "body": "Get the person away from the snake. Do not hunt the snake for a trophy photo if it puts another person in range. A phone picture from a safe distance can help a clinician.\n\nField care: keep the person calm and still. Remove rings. Immobilize the limb at heart level if practical. Walk out only if you must and can do it slowly. Evacuate.\n\nDo not cut, suck, apply a tourniquet, pack in ice, or drink alcohol. Do not use venom extractors as a plan. They waste time.\n\nNote the time and the progression of swelling. Allergic and dry bites both exist; you cannot sort them in the dirt.\n\nPrevention: flashlight at night, hands not in holes, stepping on logs not over them blindly, giving every snake an exit.",
+    "updatedAt": "2026-01-01"
+  },
+  {
+    "id": "ticks-mosquitoes",
+    "title": "Ticks, mosquitoes, and vector disease",
+    "category": "plants-animals",
+    "source": "Adapted from CDC public-domain health guidance (U.S. Government work).",
+    "license": "US Government public domain",
+    "tags": [
+      "tick",
+      "mosquito",
+      "lyme"
+    ],
+    "body": "Permethrin on clothing (dried, not on skin) and DEET or picaridin on skin reduce bites. Pants in socks in tick country. Check the warm hidden places at night: scalp, groin, armpits, behind knees, waistband.\n\nTick removal: fine tweezers, grab at the skin, steady pull. Do not twist with a match or petroleum jelly. Save the tick in a bag. Clean the site.\n\nWatch 30 days for a bull\u2019s-eye rash, fever, or joint pain. Early care matters. This app cannot diagnose Lyme or Rocky Mountain spotted fever.\n\nMosquitoes: standing water, dusk, and malaria/dengue/WNV risk vary by region. A head net weighs nothing. In malaria country, prophylaxis is a clinician decision made before the trip, not a leaf tea.",
+    "updatedAt": "2026-01-01"
+  },
+  {
+    "id": "mushrooms-do-not",
+    "title": "Mushrooms: why field tests fail",
+    "category": "plants-animals",
+    "source": "CACHE original field notes (CC0). Conservative; not a substitute for training.",
+    "license": "CC0",
+    "tags": [
+      "mushroom",
+      "amanita",
+      "forage"
+    ],
+    "body": "There is no folk test that separates edible mushrooms from deadly ones. Silver spoons, whether animals ate it, whether it peels, and whether it bruises blue are all folklore.\n\nAmanita phalloides (death cap) tastes fine and has a delayed liver failure measured in days. By the time you feel poisoned, the damage is underway. Gyromitra (false morel) has its own toxin.\n\nIf you did not know the species before the trip, you do not know it now. Eat the rice.\n\nIf someone may have eaten a toxic mushroom: save a sample, note the time, and get to medical care even if they feel well. Do not wait for vomiting.\n\nPhotograph cap, gills or pores, stem, base (dig, do not pick only the cap), and habitat if you are documenting for a clinician \u2014 not to justify dinner.",
+    "updatedAt": "2026-01-01"
+  },
+  {
+    "id": "knots-cordage",
+    "title": "Cordage and five knots that earn their keep",
+    "category": "tools",
+    "source": "CACHE original field notes (CC0). Conservative; not a substitute for training.",
+    "license": "CC0",
+    "tags": [
+      "knot",
+      "cordage",
+      "lash"
+    ],
+    "body": "Carry 15\u201330 m of real cord (3 mm+). Bank line or accessory cord beats flimsy kits.\n\nBowline: a fixed loop that is easy to undo. Dress it; finish with a backup if life depends on it (and do not use a single bowline as a climbing tie-in unless that is your trained system).\n\nFigure-eight on a bight: stronger, bulkier loop.\n\nClove hitch: start of lashings and ridgelines, backup it.\n\nTrucker\u2019s hitch: tarp tension. Leave a little stretch in nylon so a storm does not snap the line.\n\nPrusik or taut-line: adjustable along a line.\n\nSquare lashing: two poles at right angles. Timber hitch to start a diagonal.\n\nCut cord only when you must. A melted nylon end will not unravel. Natural cordage (inner bark, grass) is slow and weak \u2014 a winter project, not a bleeding-stopper.",
+    "updatedAt": "2026-01-01"
+  },
+  {
+    "id": "repair-kit",
+    "title": "Field repair of gear",
+    "category": "tools",
+    "source": "CACHE original field notes (CC0). Conservative; not a substitute for training.",
+    "license": "CC0",
+    "tags": [
+      "repair",
+      "tape",
+      "sewing"
+    ],
+    "body": "A tiny repair kit: needle, Kevlar or polyester thread, tenacious tape, a scrap of fabric, zip ties, a bit of wire, epoxy putty, a multi-tool, and cord.\n\nTents: tape the rip, then stitch if you have time, then tape over the stitches. A pole sleeve from a stick and tape will limp home.\n\nSleeping pads: alcohol wipe, then the manufacturer patch. A bag of water in the pad finds bubbles.\n\nStoves: clear the jet with the right tool, not a random wire that opens the orifice. Carry one backup ignition.\n\nElectronics: bags of rice are a myth for drowned phones. Power off, open ports, dry in moving air. Do not charge a wet pack.\n\nBoots: stitch and glue delams; a gaiter plus tape will hold a sole for a walk-out. Blisters from a repair are a second problem \u2014 fix the hot spot the same hour.\n\nIf a repair involves fuel or pressure vessels, skip cleverness. Walk out.",
+    "updatedAt": "2026-01-01"
+  },
+  {
+    "id": "legal-public-lands",
+    "title": "Public-land basics (United States, not legal advice)",
+    "category": "legal",
+    "source": "CACHE original summary of common U.S. public-land rules. Not legal advice, not complete.",
+    "license": "CC0",
+    "tags": [
+      "legal",
+      "public land",
+      "fire"
+    ],
+    "body": "This is not legal advice and is not complete. Rules change by unit and season.\n\nNational forests and BLM: dispersed camping is often allowed with limits on stay length, distance from water and roads, and fire restrictions. State and local fire bans override your campfire skill.\n\nNational parks: camping is usually in designated sites only. Collecting plants, rocks, and cultural items is generally illegal.\n\nWilderness: motors and often bicycles are restricted. Group size caps exist.\n\nLeave No Trace is ethics plus, in many places, regulation: pack out trash, bury human waste correctly or pack it out, do not cut live trees.\n\nHunting and fishing require licenses and seasons. \u201cSurvival\u201d is not a blanket exemption.\n\nCrossing private land without permission is trespass even if your map app draws a pretty line. If you must leave a flood or fire, do so, then contact the owner or agency when you can.\n\nInternational borders, tribal lands, and military reservations have their own rules. Download the unit\u2019s official rules in the library pack before you go offline.",
+    "updatedAt": "2026-01-01"
+  },
+  {
+    "id": "lost-person-behavior",
+    "title": "If someone else is lost",
+    "category": "signaling",
+    "source": "CACHE original field notes (CC0). Conservative; not a substitute for training.",
+    "license": "CC0",
+    "tags": [
+      "lost",
+      "search",
+      "child"
+    ],
+    "body": "Note the last seen point, time, clothing, and intended route. That point is gold. Do not trample it.\n\nCall official search and rescue sooner than your pride wants. Give: name, age, medical issues, clothing, plan, last seen, map datum if you have coordinates.\n\nDo not send the rest of the family fanning out in the dark unless you are trained and have a stay-behind at camp. Untrained searchers become additional lost persons.\n\nChildren often go to ground near a trail or a hide. Call, then listen longer than feels natural. Whistle, wait.\n\nMark your own track. Leave a note at the car. Keep a phone on a schedule, not dying at 3 percent when the helicopter asks for a grid.",
+    "updatedAt": "2026-01-01"
+  },
+  {
+    "id": "water-crossing",
+    "title": "River crossings",
+    "category": "navigation",
+    "source": "Adapted from U.S. Army Field Manual public-domain doctrine (U.S. Government work).",
+    "license": "US Government public domain",
+    "tags": [
+      "river",
+      "ford",
+      "crossing"
+    ],
+    "body": "Look upstream for a wider, shallower braid. Avoid bends, strainers (downed trees), and anything you cannot see the bottom of.\n\nUnbuckle pack waist and chest belts so you can shed. Face upstream, sidestep, use a pole on the downstream side as a third leg \u2014 or face slightly into current, depending on training. Groups can line up, weaker in the middle.\n\nIf you fall, feet downstream, on your back, to fend rocks, then swim for an eddy. Ditch the pack if it drowns you.\n\nDo not cross in flood, at dusk, or when teeth chatter from cold before you start. Hypothermia after a \u201csuccessful\u201d crossing is common.\n\nA log over moving water is a fall onto a strainer. Sit and scoot only if it is huge and dry and you have no better ford.",
+    "updatedAt": "2026-01-01"
+  },
+  {
+    "id": "desert-travel",
+    "title": "Desert travel and vehicle breakdown",
+    "category": "climate",
+    "source": "Adapted from U.S. Army Field Manual public-domain doctrine (U.S. Government work).",
+    "license": "US Government public domain",
+    "tags": [
+      "desert",
+      "vehicle",
+      "shade"
+    ],
+    "body": "Stay with a broken vehicle if it is on a route that will be searched. The car is shade, metal for signaling, and a larger object than you.\n\nIf you must walk, walk at night if terrain allows, mark the vehicle, leave a note, and carry more water than feels ridiculous. Rest in a scraped shade trench under a tarp during the day.\n\nRadiator water may contain toxic additives \u2014 last resort only, and still a chemical risk. Do not drink the windshield fluid.\n\nSand: lower tire pressure if you know how to reseat a bead; a shovel and recovery boards beat spinning into a grave. Never camp in a wash.\n\nSun: long sleeves, neck cover, dark UV-rated glasses. A white tarp over the car interior drops the oven effect.",
+    "updatedAt": "2026-01-01"
+  },
+  {
+    "id": "coast-surf",
+    "title": "Coast, tide, and cold water",
+    "category": "climate",
+    "source": "CACHE original field notes (CC0). Conservative; not a substitute for training.",
+    "license": "CC0",
+    "tags": [
+      "tide",
+      "surf",
+      "hypothermia"
+    ],
+    "body": "Tide tables matter more than bravery. A beach that is wide at noon can be a cliff at dusk. Note escape gullies before you walk a \u201cjust around the headland\u201d photo.\n\nRip currents: do not fight straight in. Swim sideways to the rip, then in. Float and signal if you cannot swim out.\n\nCold water: even strong swimmers last minutes to tens of minutes in high-latitude seas. Help-and-huddle, keep clothes on, and get dry windproof layers on the moment you land. A \u201cquick swim\u201d without a plan is how competent people die.\n\nShellfish and red tide: local closures exist for a reason. Do not free-dive dinner after a bloom rumor.\n\nThis is not a seamanship manual. Do not put to sea in a scavenged boat because an app said you could.",
+    "updatedAt": "2026-01-01"
+  },
+  {
+    "id": "urban-outage",
+    "title": "Urban grid-down movement",
+    "category": "disaster",
+    "source": "Adapted from FEMA public-domain preparedness guidance (U.S. Government work).",
+    "license": "US Government public domain",
+    "tags": [
+      "urban",
+      "outage",
+      "security"
+    ],
+    "body": "Most urban outages are boring: dark stairwells, dead pumps, short tempers. The risk is secondary \u2014 falls, CO from generators, spoiled food, blocked roads, and crime of opportunity, not a movie.\n\nMove in daylight if you can, with a written destination and an alternate. Tell someone. Carry ID. Avoid flooded underpasses and hanging lines.\n\nDo not become a rumor node. Use a radio or official notices when they exist. This app will not invent a live news feed while air-gapped.\n\nNeighbors with medical skills and spare water beat a lone \u201coperator\u201d loadout. Check on the apartment that never opens its door.\n\nIf you must leave the city, leave early, on a full tank, with paper maps. Highways become parking lots. Side streets plus walking is a plan; arguing with a closed ramp is not.",
+    "updatedAt": "2026-01-01"
+  },
+  {
+    "id": "children-elderly",
+    "title": "Children, infants, and older adults in the field",
+    "category": "medical",
+    "source": "Adapted from CDC public-domain health guidance (U.S. Government work).",
+    "license": "US Government public domain",
+    "tags": [
+      "child",
+      "infant",
+      "elderly"
+    ],
+    "body": "Children cool and heat faster, dehydrate faster, and cannot always report pain. Offer fluids on a schedule. Carry the snack they will eat. A stuffed toy is insulation and morale.\n\nInfants: formula or breastmilk plans that do not depend on one clean bottle. No honey under one year. No field foraging.\n\nCar seats still matter after disasters. A loose infant in a flooded cabin is a drowning.\n\nOlder adults: meds on a list, spare glasses, a week of prescriptions if possible, and someone who notices confusion. Heat and cold hit them first. A fall plus blood thinners is an evacuation.\n\nDo not split a family in a crowd \u201cto save time\u201d without a written reunion point.",
+    "updatedAt": "2026-01-01"
+  },
+  {
+    "id": "mental-morale",
+    "title": "Fear, sleep, and group morale",
+    "category": "general",
+    "source": "CACHE original field notes (CC0). Conservative; not a substitute for training.",
+    "license": "CC0",
+    "tags": [
+      "morale",
+      "sleep",
+      "fear"
+    ],
+    "body": "Fear is information. Panic is unpaid overtime. Name the next 10-minute task out loud.\n\nSleep is a survival tool. Rotate watches. A group that does not sleep starts losing people to bad decisions, not to wolves.\n\nSmall rituals: hot drink, dry socks, a joke, a written plan for dawn. Creative mode in this app exists for a reason.\n\nSuicidal talk, hopelessness after a death, or a person who stops speaking needs human care, not a pep talk from a language model. Stay with them, remove obvious means if you can do so safely, and get real help when any channel exists.\n\nYou are allowed to be not fine and still do the next right task.",
+    "updatedAt": "2026-01-01"
+  },
+  {
+    "id": "ocr-documents",
+    "title": "Using imported manuals with the local AI",
+    "category": "general",
+    "source": "CACHE original field notes (CC0). Conservative; not a substitute for training.",
+    "license": "CC0",
+    "tags": [
+      "rag",
+      "pdf",
+      "library"
+    ],
+    "body": "CACHE can answer from three local sources: the bundled field library, packs you download, and files you import (PDF, text, markdown).\n\nImport only what you have a right to store. Prefer public-domain government PDFs (FEMA, CDC, many U.S. Army FMs) and your own notes.\n\nAfter import, ask a specific question (\u201cWhat is the wait time for chlorine dioxide?\u201d) rather than \u201csummarize this 400-page FM.\u201d The retriever pulls short chunks and the model (if loaded) writes with citations.\n\nIf no model is loaded, you still get extractive excerpts. That is slower to read and more honest.\n\nDelete packs and files in Settings when you need disk. Notes can be exported as text after you unlock the vault; they are never uploaded.",
+    "updatedAt": "2026-01-01"
+  },
+  {
+    "id": "nav-pacing",
+    "title": "Pacing and attack points",
+    "category": "navigation",
+    "source": "Adapted from U.S. Army Field Manual public-domain doctrine (U.S. Government work).",
+    "license": "US Government public domain",
+    "tags": [
+      "pace",
+      "attack point"
+    ],
+    "body": "Pick a catching feature beyond the target (a road, stream, cliff) so an overshoot is obvious. Count paces in 100 m sets. Reset at every attack point. Night pacing is shorter; mud is shorter; downhill is longer. If the catching feature does not appear, stop and resect \u2014 do not add another kilometer of hope.",
+    "updatedAt": "2026-01-01"
+  },
+  {
+    "id": "nav-handrails",
+    "title": "Handrails, collecting features, and aiming off",
+    "category": "navigation",
+    "source": "Adapted from U.S. Army Field Manual public-domain doctrine (U.S. Government work).",
+    "license": "US Government public domain",
+    "tags": [
+      "handrail",
+      "aiming off"
+    ],
+    "body": "A handrail is a linear feature you can follow: ridge, power line, fence, shore. Aiming off: deliberately aim left of a hut on a long shore so you know to turn right when you hit the water. Collecting features stop you from walking forever. Draw them on the paper map before the weather arrives.",
+    "updatedAt": "2026-01-01"
+  },
+  {
+    "id": "fire-wet",
+    "title": "Lighting fire in rain",
+    "category": "fire",
+    "source": "Adapted from U.S. Army Field Manual public-domain doctrine (U.S. Government work).",
+    "license": "US Government public domain",
+    "tags": [
+      "rain",
+      "fatwood"
+    ],
+    "body": "Standing dead wood is drier than the ground. Split to the dry core. Fatwood (resin-soaked pine) lights when everything else sulks. Build a roof with your body or a tarp, not over a sparking chimney. Start tiny. Feed slowly. A propane lighter in a bag beats a bow drill lecture.",
+    "updatedAt": "2026-01-01"
+  },
+  {
+    "id": "fire-signal",
+    "title": "Signal fire vs cook fire",
+    "category": "fire",
+    "source": "Adapted from U.S. Army Field Manual public-domain doctrine (U.S. Government work).",
+    "license": "US Government public domain",
+    "tags": [
+      "signal",
+      "smoke"
+    ],
+    "body": "A cook fire is small and smokeless if you can. A signal fire is dirty on purpose: green leaves after you have a hot bed, in an opening, three if you have the fuel. Do not start a hillside that will become the next incident. Have water or dirt to kill it when the aircraft has you.",
+    "updatedAt": "2026-01-01"
+  },
+  {
+    "id": "water-containers",
+    "title": "Containers and caching water",
+    "category": "food-water",
+    "source": "Adapted from U.S. Army Field Manual public-domain doctrine (U.S. Government work).",
+    "license": "US Government public domain",
+    "tags": [
+      "bottle",
+      "cache"
+    ],
+    "body": "Two one-liter bottles plus a dirty bag for scooping beats one giant bladder that fails. Mark caches on the map and on the ground. Bury shallow in shade, not in a wash. Never cache in a single unmarked bottle in a desert you cannot re-find. Treat cached water as dirty unless you sealed it yourself.",
+    "updatedAt": "2026-01-01"
+  },
+  {
+    "id": "food-cook",
+    "title": "Cooking without a kitchen",
+    "category": "food-water",
+    "source": "Adapted from U.S. Army Field Manual public-domain doctrine (U.S. Government work).",
+    "license": "US Government public domain",
+    "tags": [
+      "cook",
+      "pot"
+    ],
+    "body": "Boil is the default: water, grains, questionable leftovers. A lid saves fuel. A windscreen halves boil time. Do not cook in galvanized or unknown metal. Charred meat is not sterile inside \u2014 split thick pieces. Let pots cool before you pack them against a filter membrane.",
+    "updatedAt": "2026-01-01"
+  },
+  {
+    "id": "shelter-clothing",
+    "title": "Clothing as a system",
+    "category": "shelter",
+    "source": "Adapted from U.S. Army Field Manual public-domain doctrine (U.S. Government work).",
+    "license": "US Government public domain",
+    "tags": [
+      "layer",
+      "clothing"
+    ],
+    "body": "Base: move moisture. Mid: trap air (fleece, puffy). Shell: block wind and rain. Cotton kills in the cold when wet and is fine as a sun shirt in dry heat. Vent early so you do not soak the midlayer. Night: dry socks are worth more than a second knife. Gloves: a cheap pair plus a shell pair.",
+    "updatedAt": "2026-01-01"
+  },
+  {
+    "id": "shelter-group",
+    "title": "Group bivouac",
+    "category": "shelter",
+    "source": "Adapted from U.S. Army Field Manual public-domain doctrine (U.S. Government work).",
+    "license": "US Government public domain",
+    "tags": [
+      "group",
+      "watch"
+    ],
+    "body": "Assign: fire, water, shelter, medical, watch. The loudest person is not automatically in charge. Put the injured in the warmest real estate. Keep packs as pillows and as a door plug. Agree on the dawn plan before you sleep so nobody wanders off at 0200 with the only map.",
+    "updatedAt": "2026-01-01"
+  },
+  {
+    "id": "med-anaphylaxis",
+    "title": "Severe allergic reaction",
+    "category": "medical",
+    "source": "Adapted from CDC public-domain health guidance (U.S. Government work).",
+    "license": "US Government public domain",
+    "tags": [
+      "anaphylaxis",
+      "epinephrine"
+    ],
+    "body": "Hives plus trouble breathing, swelling of the tongue, or collapse after a sting or food is anaphylaxis. If the person has an epinephrine auto-injector, they use it as prescribed, then evacuate \u2014 epi wears off. Do not make the untrained inject random syringes. Remove a stinger by scraping. A second dose may be in their plan; this app will not invent one.",
+    "updatedAt": "2026-01-01"
+  },
+  {
+    "id": "med-fractured-pelvis",
+    "title": "Pelvis and femur suspicion",
+    "category": "medical",
+    "source": "Adapted from CDC public-domain health guidance (U.S. Government work).",
+    "license": "US Government public domain",
+    "tags": [
+      "pelvis",
+      "femur"
+    ],
+    "body": "A crushed pelvis can hide a liter of blood. Do not log-roll for fun. Stabilize the legs together, treat for shock, evacuate. Do not stuff a homemade binder if you have never practiced \u2014 you can worsen a fracture. Femur: enormous pain, shortening, swelling. Traction is trained care. Your job is still bleeding, warmth, and a carry plan.",
+    "updatedAt": "2026-01-01"
+  },
+  {
+    "id": "med-eye",
+    "title": "Eye injuries and debris",
+    "category": "medical",
+    "source": "Adapted from CDC public-domain health guidance (U.S. Government work).",
+    "license": "US Government public domain",
+    "tags": [
+      "eye",
+      "debris"
+    ],
+    "body": "Do not rub. Flush with clean water for a long time. If an object is stuck in the globe, stabilize it and cover both eyes so they stop tracking. Alkali (lime, some batteries) needs continuous flush and urgent care. Sunglasses after a snow day prevent more UV, they do not fix yesterday.",
+    "updatedAt": "2026-01-01"
+  },
+  {
+    "id": "offgrid-solar",
+    "title": "Small solar and battery discipline",
+    "category": "off-grid",
+    "source": "Adapted from U.S. Army Field Manual public-domain doctrine (U.S. Government work).",
+    "license": "US Government public domain",
+    "tags": [
+      "solar",
+      "battery"
+    ],
+    "body": "A 10\u201320 W panel plus a known-good power bank can keep a phone and a headlamp alive if you actually park the panel in sun and keep ports dry. Charge at midday, use at night. One device on airplane mode with this app\u2019s offline maps beats four devices scanning for a tower that is not there. Lithium packs hate heat on a car dash.",
+    "updatedAt": "2026-01-01"
+  },
+  {
+    "id": "offgrid-water-catch",
+    "title": "Rain catch",
+    "category": "off-grid",
+    "source": "Adapted from U.S. Army Field Manual public-domain doctrine (U.S. Government work).",
+    "license": "US Government public domain",
+    "tags": [
+      "rain",
+      "tarp"
+    ],
+    "body": "A clean tarp into a clean bottle is excellent water if the tarp was not just a groundsheet. First-flush the dust. Do not catch off a roof that is asphalt-granule soup unless you will filter and still accept chemical risk. In lightning, you are holding a wet sheet on a ridge \u2014 maybe wait.",
+    "updatedAt": "2026-01-01"
+  },
+  {
+    "id": "hygiene-teeth",
+    "title": "Teeth and small infections",
+    "category": "hygiene",
+    "source": "Adapted from CDC public-domain health guidance (U.S. Government work).",
+    "license": "US Government public domain",
+    "tags": [
+      "teeth",
+      "infection"
+    ],
+    "body": "A dental abscess can drop a strong walker. Saltwater rinses, ibuprofen if they already tolerate it, and a fast walk to care. Do not pack aspirin on a bleeding socket as folklore. Floss and a brush weigh less than a disaster. In the field, a clean cloth and water after sugary gels prevents a week of misery.",
+    "updatedAt": "2026-01-01"
+  },
+  {
+    "id": "tools-knife",
+    "title": "Knife and axe safety",
+    "category": "tools",
+    "source": "CACHE original field notes (CC0). Conservative; not a substitute for training.",
+    "license": "CC0",
+    "tags": [
+      "knife",
+      "axe"
+    ],
+    "body": "Cut away from the femoral artery. Sit to carve. A sharp knife is safer than a dull one you lean into. Axe: clear the circle, plant the feet, use a chopping block, never work on a swinging branch over your shin. Sheath before you walk. A folding knife in a pocket without a lock is a future puncture.",
+    "updatedAt": "2026-01-01"
+  },
+  {
+    "id": "tools-cord-repair",
+    "title": "Sewing a load-bearing strap",
+    "category": "tools",
+    "source": "CACHE original field notes (CC0). Conservative; not a substitute for training.",
+    "license": "CC0",
+    "tags": [
+      "sew",
+      "strap"
+    ],
+    "body": "Back a rip with a fabric patch. Use small tight stitches, not one heroic yank of dental floss. Bar-tack the ends. Tape is a helper, not the structure, on a hip belt that holds a 20 kg pack. Test in camp, not on the crux.",
+    "updatedAt": "2026-01-01"
+  },
+  {
+    "id": "legal-radio",
+    "title": "Radios and beacons",
+    "category": "legal",
+    "source": "CACHE original field notes (CC0). Conservative; not a substitute for training.",
+    "license": "CC0",
+    "tags": [
+      "radio",
+      "plb",
+      "inreach"
+    ],
+    "body": "A licensed ham radio is not a toy, and an unlicensed transmission on some bands is illegal. A PLB or satellite messenger is a distress tool \u2014 send accurate information, then stay put if you said you would. False alerts steal aircraft from real patients. This app never keys a radio for you.",
+    "updatedAt": "2026-01-01"
+  },
+  {
+    "id": "plants-nettle-cattail",
+    "title": "Two commonly discussed wild plants",
+    "category": "plants-animals",
+    "source": "CACHE original field notes (CC0). Conservative; not a substitute for training.",
+    "license": "CC0",
+    "tags": [
+      "nettle",
+      "cattail"
+    ],
+    "body": "Stinging nettle (Urtica) and cattail (Typha) appear in many manuals as food after proper ID and cooking. They also have lookalikes and dirty-water risks. If you cannot name the plant in Latin and common name before the trip, skip it. This library will not talk you into a salad.",
+    "updatedAt": "2026-01-01"
+  },
+  {
+    "id": "animals-predators",
+    "title": "Bears, big cats, and food storage",
+    "category": "plants-animals",
+    "source": "CACHE original field notes (CC0). Conservative; not a substitute for training.",
+    "license": "CC0",
+    "tags": [
+      "bear",
+      "food storage"
+    ],
+    "body": "You will not outrun a bear. Food storage rules exist: canister, hang, or lock where required. Cook away from the bed. If charged, species and region change the response (black bear vs grizzly). Learn the local agency page before you go offline. Do not sleep in the clothes you cooked in. A dog off-leash is not a bear plan.",
+    "updatedAt": "2026-01-01"
+  },
+  {
+    "id": "animals-livestock",
+    "title": "Dogs, livestock, and rural roads",
+    "category": "plants-animals",
+    "source": "CACHE original field notes (CC0). Conservative; not a substitute for training.",
+    "license": "CC0",
+    "tags": [
+      "dog",
+      "cattle"
+    ],
+    "body": "Give livestock an exit. Do not get between a cow and a calf. Close gates you opened. Rural dogs: stand your ground, do not sprint, use a stick as a barrier not a club if you can. Report bites and start medical care \u2014 infection and rabies decisions belong to clinicians.",
+    "updatedAt": "2026-01-01"
+  },
+  {
+    "id": "disaster-winter-storm",
+    "title": "Winter storm at home",
+    "category": "disaster",
+    "source": "Adapted from U.S. Army Field Manual public-domain doctrine (U.S. Government work).",
+    "license": "US Government public domain",
+    "tags": [
+      "snow",
+      "ice",
+      "home"
+    ],
+    "body": "Pipe freeze: drip a faucet, open cabinets, know the shutoff. Heat: as in the outage note \u2014 no indoor combustion without venting. Travel: a full tank, a bag, and the humility to not pass a closed gate. After ice, treat every branch as armed. Generators stay outside, away from windows, dry, and fed with stored fuel that is not a living-room stack.",
+    "updatedAt": "2026-01-01"
+  },
+  {
+    "id": "disaster-hazardous",
+    "title": "Unknown chemical smell or spill",
+    "category": "disaster",
+    "source": "Adapted from U.S. Army Field Manual public-domain doctrine (U.S. Government work).",
+    "license": "US Government public domain",
+    "tags": [
+      "chemical",
+      "spill"
+    ],
+    "body": "If the air hurts, leave upwind and uphill if the cloud is heavy, call official responders when you can. Do not \u201ctaste\u201d to ID. Take clothes off if they are soaked in an unknown liquid, then seal them, then wash skin with water. This app cannot replace a placard lookup when you have no network \u2014 distance is the tool.",
+    "updatedAt": "2026-01-01"
+  },
+  {
+    "id": "nav-gps-dead",
+    "title": "When GNSS lies or dies",
+    "category": "navigation",
+    "source": "Adapted from U.S. Army Field Manual public-domain doctrine (U.S. Government work).",
+    "license": "US Government public domain",
+    "tags": [
+      "gps",
+      "gnss"
+    ],
+    "body": "A phone GNSS can be 50\u2013100 m off in canyons or under wet snow. Do not argue with a cliff. Trust terrain. Airplane mode still allows GNSS on many phones; it does not allow map downloads. Cache tiles before you leave. A dying phone: one fix, write the coordinates on paper, then off. Last-known in CACHE is for this moment.",
+    "updatedAt": "2026-01-01"
+  },
+  {
+    "id": "general-ten-essentials",
+    "title": "The ten essentials, updated",
+    "category": "general",
+    "source": "CACHE original field notes (CC0). Conservative; not a substitute for training.",
+    "license": "CC0",
+    "tags": [
+      "essentials",
+      "kit"
+    ],
+    "body": "Navigation, light, sun protection, first aid, ignition, repair/tools, extra food, extra water, extra layers, and emergency shelter. Add: communication device appropriate to the area, and the skill to use each item. A gadget you have not practiced is a paperweight. This list does not make you immortal; it buys time.",
+    "updatedAt": "2026-01-01"
+  },
+  {
+    "id": "general-trip-plan",
+    "title": "Leave a trip plan",
+    "category": "general",
+    "source": "CACHE original field notes (CC0). Conservative; not a substitute for training.",
+    "license": "CC0",
+    "tags": [
+      "plan",
+      "itinerary"
+    ],
+    "body": "Write: names, vehicle, plates, trailhead, route, camps, bailouts, and when to call SAR if you are not back. Give it to a human who will actually call. Update them if you change the plan. A GPX in the cloud they cannot open at 2 a.m. is not a trip plan. Paper still works when the group chat does not.",
+    "updatedAt": "2026-01-01"
+  },
+  {
+    "id": "repair-water-filter",
+    "title": "A clogged filter",
+    "category": "tools",
+    "source": "CACHE original field notes (CC0). Conservative; not a substitute for training.",
+    "license": "CC0",
+    "tags": [
+      "filter",
+      "backflush"
+    ],
+    "body": "Backflush as the maker intended. Prefilter silty water. Do not let a hollow-fiber freeze \u2014 ice breaks the membrane and you will not see the holes. If it froze, retire it for microbes you care about. A clogged filter plus impatience becomes unfiltered drinking. Boil instead.",
+    "updatedAt": "2026-01-01"
+  },
+  {
+    "id": "food-plants-universal-no",
+    "title": "Why the universal edibility test is a last-last resort",
+    "category": "food-water",
+    "source": "Adapted from U.S. Army Field Manual public-domain doctrine (U.S. Government work).",
+    "license": "US Government public domain",
+    "tags": [
+      "edibility test"
+    ],
+    "body": "The classic test (touch, wait, lips, wait, mouth, wait, swallow a little, wait many hours) misses delayed organ toxins and will not save you from Amanita. It also assumes you have a day to be ill. Identification plus a known-edible species list prepared at home is the actual method. Hunger is not ID.",
+    "updatedAt": "2026-01-01"
+  },
+  {
+    "id": "climate-altitude",
+    "title": "Altitude illness",
+    "category": "climate",
+    "source": "Adapted from U.S. Army Field Manual public-domain doctrine (U.S. Government work).",
+    "license": "US Government public domain",
+    "tags": [
+      "altitude",
+      "ams"
+    ],
+    "body": "Headache, nausea, poor sleep above a rise you are not used to can be acute mountain sickness. The treatment is descend. Do not ascend with worsening symptoms. HAPE and HACE (wet lungs, wet brain) are emergencies: down, now, plus real medical care. Diamox is a prescription, not a candy this app can dose. Hydration helps comfort; it does not cure HACE.",
+    "updatedAt": "2026-01-01"
+  },
+  {
+    "id": "hygiene-water-wounds",
+    "title": "Do not wash wounds in the creek you drink",
+    "category": "hygiene",
+    "source": "Adapted from CDC public-domain health guidance (U.S. Government work).",
+    "license": "US Government public domain",
+    "tags": [
+      "wound",
+      "creek"
+    ],
+    "body": "Downstream of camp is for washing. Upstream is for scooping drink water you will treat. A wound rinsed in a cattle creek is an infection plan. Use treated water for irrigation even if it hurts your supply \u2014 a septic leg costs more water later.",
+    "updatedAt": "2026-01-01"
+  },
+  {
+    "id": "legal-disclaimer",
+    "title": "Limits of this library and the local AI",
+    "category": "legal",
+    "source": "CACHE original field notes (CC0). Conservative; not a substitute for training.",
+    "license": "CC0",
+    "tags": [
+      "disclaimer",
+      "limits"
+    ],
+    "body": "CACHE is an offline companion. It can be wrong. It may cite a chunk that does not fit your climate or your body. It is not a doctor, lawyer, guide, or search commander. Government sources here are adapted, shortened, and possibly outdated. Check official publications when you have a channel. If this text and a current official order disagree, the official order wins.",
+    "updatedAt": "2026-01-01"
+  }
+]

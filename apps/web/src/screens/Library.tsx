@@ -1,0 +1,64 @@
+import { CATEGORY_LABELS, searchDocuments, type LibraryCategory, type LibraryDocument } from "@cache/core";
+import { useMemo, useState } from "react";
+import { sendPrompt, setScreen, useCache } from "../hooks";
+
+const CATS = ["all", ...Object.keys(CATEGORY_LABELS)] as Array<LibraryCategory | "all">;
+
+export function Library() {
+  const { library } = useCache();
+  const [q, setQ] = useState("");
+  const [cat, setCat] = useState<LibraryCategory | "all">("all");
+  const [open, setOpen] = useState<LibraryDocument | null>(null);
+
+  const hits = useMemo(() => searchDocuments(library, q, cat), [library, q, cat]);
+
+  return (
+    <div className="stack">
+      <div>
+        <p className="kicker">FTS · on device</p>
+        <h2>Survival library</h2>
+        <p>{library.length} public-domain / open field documents. Full-text search never leaves this device.</p>
+      </div>
+      <input className="input" placeholder="Search manuals…" value={q} onChange={(e) => setQ(e.target.value)} />
+      <div className="chips">
+        {CATS.map((c) => (
+          <button key={c} className={`chip ${cat === c ? "on" : ""}`} onClick={() => setCat(c)}>
+            {c === "all" ? "All" : CATEGORY_LABELS[c]}
+          </button>
+        ))}
+      </div>
+      {open ? (
+        <article className="card stack">
+          <div className="row">
+            <h3>{open.title}</h3>
+            <span className="spacer" />
+            <button className="btn ghost" onClick={() => setOpen(null)}>Back</button>
+            <button
+              className="btn primary"
+              onClick={() => {
+                setScreen("chat");
+                void sendPrompt(`Summarize and apply this manual to field use: ${open.title}`);
+              }}
+            >
+              Ask AI
+            </button>
+          </div>
+          <p className="mono">{open.source} · {open.license}</p>
+          <div className="doc-body">{open.body}</div>
+        </article>
+      ) : (
+        <div className="card">
+          {hits.slice(0, 80).map((d) => (
+            <button key={d.id} className="list-item" style={{ width: "100%", background: "none", border: 0, textAlign: "left" }} onClick={() => setOpen(d)}>
+              <div>
+                <strong>{d.title}</strong>
+                <div className="muted">{CATEGORY_LABELS[d.category]} · {d.source}</div>
+              </div>
+              <span className="mono">{d.tags.slice(0, 3).join(" · ")}</span>
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}

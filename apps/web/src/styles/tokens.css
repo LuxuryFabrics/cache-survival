@@ -1,0 +1,45 @@
+:root {
+  --bg: #0b0d0b;
+  --bg-elev: #121612;
+  --bg-panel: #171c17;
+  --bg-input: #0e120e;
+  --line: #2b332b;
+  --line-strong: #3d4a38;
+  --text: #e7eadc;
+  --text-dim: #9aa38c;
+  --text-faint: #6b735f;
+  --amber: #e3a31a;
+  --amber-dim: #8a6410;
+  --green: #7ea45a;
+  --green-deep: #3d5a2c;
+  --red: #d45c3a;
+  --red-dim: #6e2c1c;
+  --sun: #f4e7b4;
+  --shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+  --radius: 14px;
+  --touch: 48px;
+  --font: "IBM Plex Sans", "Segoe UI", "Helvetica Neue", sans-serif;
+  --mono: "IBM Plex Mono", "ui-monospace", "SFMono-Regular", Menlo, Consolas, monospace;
+}
+
+html[data-contrast="high"] {
+  --bg: #000;
+  --bg-elev: #0a0a0a;
+  --bg-panel: #111;
+  --text: #fff;
+  --text-dim: #ddd;
+  --line: #888;
+  --amber: #ffcc33;
+}
+
+* { box-sizing: border-box; }
+html, body, #root { height: 100%; margin: 0; }
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+}
+button, input, textarea, select { font: inherit; color: inherit; }
+button { cursor: pointer; }
+a { color: var(--amber); }
