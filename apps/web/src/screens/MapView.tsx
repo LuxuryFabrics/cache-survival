@@ -48,15 +48,31 @@ export function MapView() {
   );
   const [measure, setMeasure] = useState<{ lat: number; lon: number } | null>(null);
   const [info, setInfo] = useState("");
+  const [mapError, setMapError] = useState("");
 
   useEffect(() => {
     if (!ref.current || mapRef.current) return;
-    const map = new maplibregl.Map({
-      container: ref.current,
-      style: STYLE,
-      center: [fix?.lon ?? -104.99, fix?.lat ?? 39.74],
-      zoom: 2.2,
-      attributionControl: { compact: true },
+    const canvas = document.createElement("canvas");
+    const gl = canvas.getContext("webgl2") || canvas.getContext("webgl");
+    if (!gl) {
+      setMapError("WebGL unavailable on this device — search, pins, measure, and Ask AI still work.");
+      return;
+    }
+    let map: maplibregl.Map;
+    try {
+      map = new maplibregl.Map({
+        container: ref.current,
+        style: STYLE,
+        center: [fix?.lon ?? -104.99, fix?.lat ?? 39.74],
+        zoom: 2.2,
+        attributionControl: { compact: true },
+      });
+    } catch (err) {
+      setMapError(err instanceof Error ? err.message : "MapLibre failed to start");
+      return;
+    }
+    map.on("error", (e) => {
+      if (e.error) setMapError(e.error.message);
     });
     map.addControl(new maplibregl.NavigationControl({ showCompass: true }), "bottom-right");
     map.on("click", (e) => {
@@ -140,7 +156,14 @@ export function MapView() {
             Measure from pin
           </button>
         </div>
-        <div ref={ref} style={{ height: "100%" }} />
+        <div ref={ref} style={{ height: "100%", background: "#0d1418" }} />
+        {mapError && (
+          <div className="card" style={{ position: "absolute", inset: 56, zIndex: 1 }}>
+            <h3>Map canvas offline</h3>
+            <p>{mapError}</p>
+            <p className="muted">Use town search and saved places. Street-level PMTiles packs still apply on devices with WebGL.</p>
+          </div>
+        )}
         <div className="map-popup card stack">
           {hits.length > 0 && (
             <div>
