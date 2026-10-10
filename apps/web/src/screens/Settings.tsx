@@ -4,7 +4,7 @@ import { setScreen, updateSettings, useCache } from "../hooks";
 
 export function Settings() {
   const s = useCache();
-  const gap = useSyncExternalStore(airgap.subscribe.bind(airgap), () => airgap.getState(), () => airgap.getState());
+  const gap = useSyncExternalStore(airgap.subscribeStore, airgap.getSnapshot, airgap.getSnapshot);
 
   return (
     <div className="stack">

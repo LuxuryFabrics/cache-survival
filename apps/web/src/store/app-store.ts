@@ -119,42 +119,65 @@ export async function persist(): Promise<void> {
   await kvSet(KEYS.installs, state.installs);
 }
 
+async function loadJson<T>(url: string, fallback: T): Promise<T> {
+  try {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`${res.status} ${url}`);
+    return (await res.json()) as T;
+  } catch (err) {
+    console.warn("CACHE boot asset failed", url, err);
+    return fallback;
+  }
+}
+
 export async function boot(): Promise<void> {
-  const [settings, convos, saved, notes, files, installs, lib, places] = await Promise.all([
-    kvGet<AppSettings>(KEYS.settings),
-    kvGet<Conversation[]>(KEYS.conversations),
-    kvGet<SavedPlace[]>(KEYS.places),
-    kvGet<EncryptedNote[]>(KEYS.notes),
-    kvGet<UserFile[]>(KEYS.files),
-    kvGet<Record<string, InstallStatus>>(KEYS.installs),
-    fetch("/data/library-seed.json").then((r) => r.json()) as Promise<LibraryDocument[]>,
-    fetch("/data/places.json").then((r) => r.json()) as Promise<Place[]>,
-  ]);
+  try {
+    const [settings, convos, saved, notes, files, installs, lib] = await Promise.all([
+      kvGet<AppSettings>(KEYS.settings).catch(() => undefined),
+      kvGet<Conversation[]>(KEYS.conversations).catch(() => undefined),
+      kvGet<SavedPlace[]>(KEYS.places).catch(() => undefined),
+      kvGet<EncryptedNote[]>(KEYS.notes).catch(() => undefined),
+      kvGet<UserFile[]>(KEYS.files).catch(() => undefined),
+      kvGet<Record<string, InstallStatus>>(KEYS.installs).catch(() => undefined),
+      loadJson<LibraryDocument[]>("/data/library-seed.json", []),
+    ]);
 
-  const nextSettings = { ...defaultSettings(), ...settings };
-  if (nextSettings.airgapLocked) airgap.lock();
-  airgap.setDebug(nextSettings.airgapDebug);
-  if (nextSettings.highContrast) document.documentElement.dataset.contrast = "high";
+    const nextSettings = { ...defaultSettings(), ...settings };
+    if (nextSettings.airgapLocked) airgap.lock();
+    airgap.setDebug(nextSettings.airgapDebug);
+    if (nextSettings.highContrast) document.documentElement.dataset.contrast = "high";
 
-  const conversations = convos?.length ? convos : [createConversation("survival", "Field brief")];
-  const usage = await estimateUsageMb();
+    const conversations = convos?.length ? convos : [createConversation("survival", "Field brief")];
+    const usage = await estimateUsageMb().catch(() => ({ usedMb: 0, quotaMb: 0 }));
 
-  patch({
-    ready: true,
-    settings: nextSettings,
-    conversations,
-    activeConvoId: conversations[0].id,
-    library: lib,
-    chunks: chunkAll(lib),
-    places,
-    savedPlaces: saved ?? [],
-    notes: notes ?? [],
-    files: files ?? [],
-    installs: installs ?? {},
-    usage,
-    statusLine: `${lib.length} manuals · ${places.length.toLocaleString()} places · local`,
-    screen: nextSettings.onboarded ? "chat" : "packs",
-  });
+    patch({
+      ready: true,
+      settings: nextSettings,
+      conversations,
+      activeConvoId: conversations[0].id,
+      library: lib,
+      chunks: chunkAll(lib),
+      savedPlaces: saved ?? [],
+      notes: notes ?? [],
+      files: files ?? [],
+      installs: installs ?? {},
+      usage,
+      statusLine: `${lib.length} manuals · loading places…`,
+      screen: nextSettings.onboarded ? "chat" : "packs",
+    });
+
+    const places = await loadJson<Place[]>("/data/places.json", []);
+    patch({
+      places,
+      statusLine: `${lib.length} manuals · ${places.length.toLocaleString()} places · local`,
+    });
+  } catch (err) {
+    patch({
+      ready: true,
+      screen: "packs",
+      statusLine: `Boot degraded: ${err instanceof Error ? err.message : String(err)}`,
+    });
+  }
 }
 
 export function setScreen(screen: Screen): void {

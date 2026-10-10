@@ -3,7 +3,7 @@ import { useSyncExternalStore } from "react";
 import { activeModelLabel, useCache } from "../hooks";
 
 function useAirgap() {
-  return useSyncExternalStore(airgap.subscribe.bind(airgap), () => airgap.getState(), () => airgap.getState());
+  return useSyncExternalStore(airgap.subscribeStore, airgap.getSnapshot, airgap.getSnapshot);
 }
 
 export function StatusBar() {

@@ -13,6 +13,7 @@ export class AirgapGuard {
   private debug = false;
   private attempts: NetworkAttempt[] = [];
   private listeners = new Set<(state: AirgapState) => void>();
+  private snapshot: AirgapState = { locked: false, debug: false, attempts: [] };
   private installed = false;
   private originalFetch?: typeof fetch;
 
@@ -33,15 +34,21 @@ export class AirgapGuard {
     this.emit();
   }
 
+  getSnapshot = (): AirgapState => this.snapshot;
+
   getState(): AirgapState {
-    return { locked: this.locked, debug: this.debug, attempts: this.attempts.slice(-200) };
+    return this.snapshot;
   }
 
+  /** Stable subscribe for useSyncExternalStore — do not .bind() in render. */
   subscribe(fn: (state: AirgapState) => void): () => void {
     this.listeners.add(fn);
-    fn(this.getState());
     return () => this.listeners.delete(fn);
   }
+
+  subscribeStore = (onStoreChange: () => void): (() => void) => {
+    return this.subscribe(() => onStoreChange());
+  };
 
   /** Record an attempt from platform adapters (XHR, WebSocket, Tauri HTTP). */
   record(method: string, url: string, source: string): boolean {
@@ -75,7 +82,12 @@ export class AirgapGuard {
   }
 
   private emit(): void {
-    const state = this.getState();
+    this.snapshot = {
+      locked: this.locked,
+      debug: this.debug,
+      attempts: this.attempts.slice(-200),
+    };
+    const state = this.snapshot;
     for (const fn of this.listeners) fn(state);
   }
 }

@@ -16,5 +16,6 @@ describe("airgap", () => {
     expect(g.record("GET", "/models/a.gguf", "test")).toBe(false);
     expect(g.getState().locked).toBe(true);
     expect(g.getState().attempts.some((a) => a.blocked)).toBe(true);
+    expect(g.getSnapshot()).toBe(g.getState());
   });
 });
