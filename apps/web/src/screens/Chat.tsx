@@ -164,7 +164,7 @@ export function Chat() {
             Send
           </button>
           <button className="btn" onClick={() => void onVoice()}>Voice</button>
-          <span className="muted">⌘/Ctrl + Enter · cites local manuals</span>
+          <span className="muted desktop-hint">⌘/Ctrl + Enter · cites local manuals</span>
         </div>
       </div>
     </div>

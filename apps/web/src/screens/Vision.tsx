@@ -1,5 +1,6 @@
 import { FIELD_ID_CATALOG, describeMatch, matchFieldId } from "@cache/core";
 import { useState } from "react";
+import { MobileBack } from "../components/Shell";
 import { sendPrompt, setScreen } from "../hooks";
 import { ocrImage } from "../lib/ocr";
 
@@ -27,6 +28,7 @@ export function Vision() {
 
   return (
     <div className="stack">
+      <MobileBack />
       <div className="page-head">
         <p className="kicker">On-device catalog</p>
         <h2>Vision</h2>

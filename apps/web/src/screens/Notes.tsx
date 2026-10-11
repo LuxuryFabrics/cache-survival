@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { MobileBack } from "../components/Shell";
 import { addNote, deleteNote, readNote, useCache } from "../hooks";
 
 export function Notes() {
@@ -34,6 +35,7 @@ export function Notes() {
 
   return (
     <div className="stack">
+      <MobileBack />
       <div className="page-head">
         <p className="kicker">AES-256-GCM</p>
         <h2>Notes</h2>

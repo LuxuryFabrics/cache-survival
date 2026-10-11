@@ -13,12 +13,12 @@ export function StatusPills() {
   const offline = gap.locked || !s.online;
   const last = s.settings.lastKnown;
   return (
-    <div className="row" style={{ marginBottom: 18 }}>
+    <div className="row status-row">
       <span className={`badge ${offline ? "" : "warn"}`}>
         <span className={`dot ${offline ? "" : "off"}`} />
         {gap.locked ? "Air-gap" : s.online ? "Net open" : "Offline"}
       </span>
-      <span className="badge quiet">{model}</span>
+      <span className="badge quiet model-pill">{model}</span>
       {last ? (
         <button className="badge quiet loc-chip" onClick={() => setScreen("map")} title="Open last pin on the map">
           {last.lat.toFixed(2)}, {last.lon.toFixed(2)}
@@ -30,7 +30,7 @@ export function StatusPills() {
       )}
       {gap.debug && <span className="badge hot">Debug {gap.attempts.filter((a) => a.blocked).length}</span>}
       <span className="spacer" />
-      <span className="muted">{s.statusLine}</span>
+      <span className="muted status-detail">{s.statusLine}</span>
     </div>
   );
 }

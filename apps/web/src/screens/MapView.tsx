@@ -47,6 +47,8 @@ export function MapView() {
   const [zoom, setZoom] = useState(2.2);
   const [cacheLabel, setCacheLabel] = useState("");
   const [saving, setSaving] = useState<{ done: number; total: number } | null>(null);
+  const [narrow, setNarrow] = useState(false);
+  const [keyOpen, setKeyOpen] = useState(false);
 
   useEffect(() => {
     if (!ref.current || mapRef.current) return;
@@ -142,8 +144,48 @@ export function MapView() {
   }, [showLands]);
 
   useEffect(() => {
+    const mq = window.matchMedia("(max-width: 860px)");
+    const apply = () => setNarrow(mq.matches);
+    apply();
+    mq.addEventListener("change", apply);
+    return () => mq.removeEventListener("change", apply);
+  }, []);
+
+  useEffect(() => {
+    let sentinel: WakeLockSentinel | null = null;
+    let stopped = false;
+    async function claim() {
+      if (stopped || !("wakeLock" in navigator)) return;
+      try {
+        sentinel = await navigator.wakeLock.request("screen");
+      } catch {
+        sentinel = null;
+      }
+    }
+    void claim();
+    const onVis = () => {
+      if (document.visibilityState === "visible") void claim();
+    };
+    document.addEventListener("visibilitychange", onVis);
+    return () => {
+      stopped = true;
+      document.removeEventListener("visibilitychange", onVis);
+      void sentinel?.release();
+    };
+  }, []);
+
+  useEffect(() => {
     scaleRef.current?.setUnit(s.settings.units === "mi" ? "imperial" : "metric");
   }, [s.settings.units]);
+
+  useEffect(() => {
+    mapRef.current?.setPadding({
+      top: narrow ? 108 : 56,
+      bottom: narrow ? 150 : 96,
+      left: narrow ? 8 : 8,
+      right: 8,
+    });
+  }, [narrow]);
 
   useEffect(() => {
     const focus = s.pendingMapFocus;
@@ -176,6 +218,17 @@ export function MapView() {
     mapRef.current?.flyTo({ center: [lon, lat], zoom: SEARCH_ZOOM, essential: true });
     updateSettings({ lastKnown: { lat, lon, at: Date.now(), source: "manual" } });
     void prefetchAround(lat, lon).then(() => void refreshCacheLabel());
+  }
+
+  async function copyCoords() {
+    if (!fix) return;
+    const text = `${fix.lat.toFixed(5)}, ${fix.lon.toFixed(5)}`;
+    try {
+      await navigator.clipboard.writeText(text);
+      setInfo("Coordinates copied");
+    } catch {
+      setInfo(text);
+    }
   }
 
   function useGps() {
@@ -235,7 +288,7 @@ export function MapView() {
 
   return (
     <div className="stack">
-      <div className="row">
+      <div className="row map-page-head">
         <div className="page-head">
           <p className="kicker">Offline vectors</p>
           <h2>Maps</h2>
@@ -257,25 +310,31 @@ export function MapView() {
               setHits(searchPlaces(s.places, e.target.value, 8));
             }}
           />
-          <button className="btn" onClick={useGps}>Last / GPS</button>
-          <button className="btn" onClick={() => setMeasure(fix ? { lat: fix.lat, lon: fix.lon } : null)}>
-            Measure from pin
-          </button>
-          <button className={`chip ${showLands ? "on" : ""}`} onClick={() => setShowLands((v) => !v)}>
-            Public land
-          </button>
-          <button className="btn primary" onClick={() => void saveThisView()} disabled={!!saving}>
-            {saving ? `Saving ${saving.done}/${saving.total}` : "Save this view"}
-          </button>
+          <div className="map-actions">
+            <button className="btn gps-row" onClick={useGps}>GPS</button>
+            <button className="btn" onClick={() => setMeasure(fix ? { lat: fix.lat, lon: fix.lon } : null)}>
+              Measure
+            </button>
+            <button className={`chip ${showLands ? "on" : ""}`} onClick={() => setShowLands((v) => !v)}>
+              Public land
+            </button>
+            <button className={`chip key-only ${keyOpen ? "on" : ""}`} onClick={() => setKeyOpen((v) => !v)}>
+              Key
+            </button>
+            <button className="btn primary" onClick={() => void saveThisView()} disabled={!!saving}>
+              {saving ? `Saving ${saving.done}/${saving.total}` : "Save view"}
+            </button>
+          </div>
         </div>
+        <button type="button" className="map-locate" onClick={useGps}>GPS</button>
         <div ref={ref} style={{ height: "100%", background: "#b7d0dc" }} />
         <div className="map-hud">
           <div className="map-zoom">
-            z{zoom.toFixed(1)} · {zoomHint}
-            {cacheLabel ? ` · ${cacheLabel}` : ""}
+            {narrow ? `z${zoom.toFixed(1)}` : `z${zoom.toFixed(1)} · ${zoomHint}`}
+            {!narrow && cacheLabel ? ` · ${cacheLabel}` : ""}
           </div>
         </div>
-        {showLands && (
+        {showLands && (!narrow || keyOpen) && (
           <div className="land-legend">
             <div><i className="swatch priv" /> Private / unmapped</div>
             <div><i className="swatch blm" /> BLM</div>
@@ -302,6 +361,15 @@ export function MapView() {
           </div>
         )}
         <div className="map-popup card stack">
+          {narrow && s.savedPlaces.length > 0 && hits.length === 0 && (
+            <div className="map-pins">
+              {s.savedPlaces.map((p) => (
+                <button key={p.id} type="button" className="chip" onClick={() => fly(p.lat, p.lon, p.name)}>
+                  {p.name}
+                </button>
+              ))}
+            </div>
+          )}
           {hits.length > 0 && (
             <div>
               {hits.map((p) => (
@@ -345,6 +413,7 @@ export function MapView() {
               >
                 Save
               </button>
+              <button className="btn" onClick={() => void copyCoords()}>Copy</button>
               <button
                 className="btn primary"
                 onClick={() => {
@@ -355,14 +424,15 @@ export function MapView() {
                   );
                 }}
               >
-                Ask AI about this location
+                <span className="ask-long">Ask AI about this location</span>
+                <span className="ask-short">Ask AI</span>
               </button>
             </div>
           )}
         </div>
       </div>
       {s.savedPlaces.length > 0 && (
-        <div className="card">
+        <div className="card saved-places">
           {s.savedPlaces.map((p) => (
             <div key={p.id} className="list-item">
               <div>

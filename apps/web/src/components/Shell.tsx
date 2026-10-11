@@ -51,6 +51,14 @@ export function Sidebar() {
   );
 }
 
+export function MobileBack() {
+  return (
+    <button type="button" className="btn ghost mobile-back" onClick={() => setScreen("more")}>
+      ← More
+    </button>
+  );
+}
+
 export function Tabbar() {
   const { screen } = useCache();
   return (

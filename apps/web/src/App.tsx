@@ -30,9 +30,9 @@ export function App() {
   }, []);
 
   return (
-    <div className="app">
+    <div className="app" data-screen={screen}>
       <Sidebar />
-      <div style={{ display: "flex", flexDirection: "column", minWidth: 0, minHeight: 0 }}>
+      <div className="main-col">
         <main className="workspace">
           <StatusPills />
           {!ready ? (

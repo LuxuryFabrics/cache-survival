@@ -8,6 +8,7 @@ import {
 } from "@cache/core";
 import { useMemo } from "react";
 import { createDownloadAdapter } from "../lib/downloader";
+import { MobileBack } from "../components/Shell";
 import { forgetPack, markOnboarded, setInstall, updateSettings, useCache } from "../hooks";
 
 const ICO: Record<string, string> = {
@@ -61,6 +62,7 @@ export function Packs() {
 
   return (
     <div className="stack">
+      <MobileBack />
       <div className="page-head">
         <p className="kicker">Download once · run forever</p>
         <h2>Packs</h2>

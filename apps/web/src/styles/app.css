@@ -7,8 +7,9 @@
   background: var(--bg);
 }
 @media (max-width: 860px) {
-  .app { grid-template-columns: 1fr; grid-template-rows: 1fr auto; }
+  .app { display: flex; flex-direction: column; height: 100%; }
   .sidebar { display: none; }
+  .main-col { flex: 1; min-height: 0; width: 100%; }
 }
 
 .sidebar {
@@ -85,6 +86,12 @@
   gap: 8px;
 }
 
+.main-col {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+}
 .workspace {
   min-width: 0;
   min-height: 0;
@@ -269,7 +276,7 @@ textarea {
   grid-template-columns: 1fr 1fr;
   gap: 12px;
 }
-@media (max-width: 620px) { .field-actions { grid-template-columns: 1fr; } }
+.mobile-back { display: none; }
 .field-action {
   background: #fff;
   border: 0;
@@ -479,4 +486,106 @@ textarea {
   background: #fff;
   border-radius: 22px;
   box-shadow: var(--shadow);
+}
+.status-row { margin-bottom: 18px; }
+.map-actions { display: contents; }
+.ask-short { display: none; }
+.map-locate { display: none; }
+.key-only { display: none; }
+.map-pins { display: none; }
+
+@media (max-width: 860px) {
+  .sidebar { display: none; }
+  .status-row { margin-bottom: 10px; }
+  .status-row .model-pill,
+  .status-row .status-detail { display: none; }
+  .mobile-back { display: inline-flex; align-self: flex-start; min-height: 44px; padding: 0 8px; }
+  .desktop-hint { display: none; }
+  .field-actions { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .field-action { min-height: 76px; }
+  .scroll-chips {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    -webkit-overflow-scrolling: touch;
+  }
+  .scroll-chips .chip { flex: none; }
+  .composer {
+    position: sticky;
+    bottom: 0;
+    z-index: 4;
+  }
+  .composer .btn { min-height: 44px; }
+  .tabbar button { font-size: 12px; }
+
+  .app[data-screen="map"] .status-row { display: none; }
+  .app[data-screen="map"] .main-col { height: 100%; }
+  .app[data-screen="map"] .workspace {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    padding: 0;
+    overflow: hidden;
+  }
+  .app[data-screen="map"] .workspace > .stack {
+    flex: 1;
+    min-height: 0;
+    gap: 0;
+  }
+  .app[data-screen="map"] .map-page-head { display: none; }
+  .app[data-screen="map"] .saved-places { display: none; }
+  .app[data-screen="map"] .map-wrap {
+    flex: 1;
+    height: auto;
+    min-height: 0;
+    border-radius: 0;
+  }
+  .map-tools {
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: stretch;
+  }
+  .map-tools .input { min-width: 0; }
+  .map-actions {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .map-actions .btn,
+  .map-actions .chip { flex: none; min-height: 40px; }
+  .gps-row { display: none; }
+  .key-only { display: inline-flex; }
+  .map-locate {
+    display: grid;
+    place-items: center;
+    position: absolute;
+    z-index: 2;
+    left: 12px;
+    bottom: 148px;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    border: 0;
+    background: var(--ink);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 600;
+    box-shadow: var(--shadow);
+  }
+  .map-hud { top: auto; left: 72px; right: 56px; bottom: 156px; max-width: none; }
+  .map-zoom { display: inline-block; max-width: 100%; }
+  .land-legend { top: 118px; max-height: 42%; overflow: auto; }
+  .map-popup { padding: 12px; }
+  .map-popup .ask-long { display: none; }
+  .ask-short { display: none; }
+  .map-popup .ask-short { display: inline; }
+  .map-pins {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .map-pins .chip { flex: none; background: #fff; }
 }

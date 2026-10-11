@@ -1,4 +1,5 @@
 import { fileChunks, extractPlainText, type LibraryChunk } from "@cache/core";
+import { MobileBack } from "../components/Shell";
 import { addFileMeta, deleteFile, sendPrompt, setScreen, useCache } from "../hooks";
 import { extractPdfText } from "../lib/ocr";
 
@@ -32,6 +33,7 @@ export function Files() {
 
   return (
     <div className="stack">
+      <MobileBack />
       <div className="page-head">
         <p className="kicker">Local RAG</p>
         <h2>Files</h2>

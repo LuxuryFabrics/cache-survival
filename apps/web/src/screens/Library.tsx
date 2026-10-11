@@ -30,7 +30,7 @@ export function Library() {
         <p>{s.library.length} public-domain field documents. Search never leaves this device.</p>
       </div>
       <input className="input" placeholder="Search manuals…" value={q} onChange={(e) => setQ(e.target.value)} />
-      <div className="chips">
+      <div className="chips scroll-chips">
         {CATS.map((c) => (
           <button key={c} className={`chip ${cat === c ? "on" : ""}`} onClick={() => setCat(c)}>
             {c === "all" ? "All" : CATEGORY_LABELS[c]}

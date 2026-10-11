@@ -1,5 +1,6 @@
 import { airgap, formatBytes } from "@cache/core";
 import { useSyncExternalStore } from "react";
+import { MobileBack } from "../components/Shell";
 import { setScreen, updateSettings, useCache } from "../hooks";
 
 export function Settings() {
@@ -8,6 +9,7 @@ export function Settings() {
 
   return (
     <div className="stack">
+      <MobileBack />
       <div className="page-head">
         <p className="kicker">Local only</p>
         <h2>Settings</h2>
