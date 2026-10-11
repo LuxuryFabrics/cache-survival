@@ -6,7 +6,8 @@ CACHE is the USB-drive “survival AI” idea without the proprietary brick: you
 
 ## What works today (core, end-to-end offline)
 
-- **Expert chat** with eight desks (Survival, Medic, Navigation, Food & Water, Shelter, Repair, General, Creative).
+- **Field home**: one-tap situations (bleed, water, lost, cold, shelter, this location), first-hour manuals without chat, last pin, and search across manuals + towns.
+- **Expert chat** with eight desks (Survival, Medic, Navigation, Food & Water, Shelter, Repair, General, Creative). Citations open the full manual.
 - **Graceful answers with no LLM**: extractive RAG over the bundled library, with citations.
 - **Optional local GGUF** via llama.cpp (`wllama` WASM in the web/desktop shell; `llama.rn` / native sidecar on mobile & Tauri).
 - **Offline maps**: MapLibre GL + Natural Earth world polygons, OpenFreeMap street/water/building tiles as you zoom, pin drop, distance (mi/km), saved places, 34,000+ town search, public-land overlay, “Save this view,” “Ask AI about this location.” Works with last-known or a manual pin — GNSS is optional.

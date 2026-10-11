@@ -1,23 +1,33 @@
 import { CATEGORY_LABELS, searchDocuments, type LibraryCategory, type LibraryDocument } from "@cache/core";
-import { useMemo, useState } from "react";
-import { sendPrompt, setScreen, useCache } from "../hooks";
+import { useEffect, useMemo, useState } from "react";
+import { askField, clearLibraryOpen, useCache } from "../hooks";
 
 const CATS = ["all", ...Object.keys(CATEGORY_LABELS)] as Array<LibraryCategory | "all">;
 
 export function Library() {
-  const { library } = useCache();
-  const [q, setQ] = useState("");
+  const s = useCache();
+  const [q, setQ] = useState(s.libraryQuery);
   const [cat, setCat] = useState<LibraryCategory | "all">("all");
   const [open, setOpen] = useState<LibraryDocument | null>(null);
 
-  const hits = useMemo(() => searchDocuments(library, q, cat), [library, q, cat]);
+  useEffect(() => {
+    if (s.libraryQuery) setQ(s.libraryQuery);
+  }, [s.libraryQuery]);
+
+  useEffect(() => {
+    if (!s.libraryOpenId) return;
+    const doc = s.library.find((d) => d.id === s.libraryOpenId);
+    if (doc) setOpen(doc);
+  }, [s.libraryOpenId, s.library]);
+
+  const hits = useMemo(() => searchDocuments(s.library, q, cat), [s.library, q, cat]);
 
   return (
     <div className="stack">
       <div className="page-head">
         <p className="kicker">On device</p>
         <h2>Library</h2>
-        <p>{library.length} public-domain field documents. Search never leaves this device.</p>
+        <p>{s.library.length} public-domain field documents. Search never leaves this device.</p>
       </div>
       <input className="input" placeholder="Search manuals…" value={q} onChange={(e) => setQ(e.target.value)} />
       <div className="chips">
@@ -32,13 +42,18 @@ export function Library() {
           <div className="row">
             <h3>{open.title}</h3>
             <span className="spacer" />
-            <button className="btn ghost" onClick={() => setOpen(null)}>Back</button>
+            <button
+              className="btn ghost"
+              onClick={() => {
+                setOpen(null);
+                clearLibraryOpen();
+              }}
+            >
+              Back
+            </button>
             <button
               className="btn primary"
-              onClick={() => {
-                setScreen("chat");
-                void sendPrompt(`Summarize and apply this manual to field use: ${open.title}`);
-              }}
+              onClick={() => askField(`Summarize and apply this manual to field use: ${open.title}`, "general")}
             >
               Ask AI
             </button>

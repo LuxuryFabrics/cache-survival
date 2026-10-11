@@ -69,7 +69,7 @@ export function Packs() {
       {!s.settings.onboarded && (
         <div className="card onboard stack">
           <h3>First launch</h3>
-          <p>Keep the bundled library and map. Optionally download SmolLM2 360M and whisper tiny.en on Wi-Fi.</p>
+          <p>Keep the bundled library and map. Optionally download SmolLM2 360M and whisper tiny.en on Wi-Fi. You will land on Field — tap a situation for a local answer.</p>
           <div className="row">
             <button
               className="btn primary"

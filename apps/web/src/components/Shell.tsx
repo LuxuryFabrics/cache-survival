@@ -2,6 +2,7 @@ import { newChat, selectChat, setScreen, useCache } from "../hooks";
 import type { Screen } from "../store/app-store";
 
 const ITEMS: { id: Screen; label: string; ic: string }[] = [
+  { id: "field", label: "Field", ic: "⚑" },
   { id: "chat", label: "Chat", ic: "✦" },
   { id: "map", label: "Maps", ic: "◎" },
   { id: "library", label: "Library", ic: "☰" },
@@ -11,6 +12,9 @@ const ITEMS: { id: Screen; label: string; ic: string }[] = [
   { id: "packs", label: "Packs", ic: "+" },
   { id: "settings", label: "Settings", ic: "○" },
 ];
+
+const MOBILE: Screen[] = ["field", "chat", "map", "library", "more"];
+const MORE_SCREENS: Screen[] = ["more", "vision", "notes", "files", "packs", "settings"];
 
 export function Sidebar() {
   const { screen, conversations, activeConvoId } = useCache();
@@ -49,14 +53,19 @@ export function Sidebar() {
 
 export function Tabbar() {
   const { screen } = useCache();
-  const mobile = ITEMS.filter((i) => ["chat", "map", "library", "packs", "settings"].includes(i.id));
   return (
     <nav className="tabbar" aria-label="Mobile">
-      {mobile.map((it) => (
-        <button key={it.id} className={screen === it.id ? "active" : ""} onClick={() => setScreen(it.id)}>
-          {it.label}
-        </button>
-      ))}
+      {MOBILE.map((id) => {
+        const it = id === "more"
+          ? { id: "more" as const, label: "More" }
+          : ITEMS.find((x) => x.id === id)!;
+        const active = id === "more" ? MORE_SCREENS.includes(screen) : screen === id;
+        return (
+          <button key={id} className={active ? "active" : ""} onClick={() => setScreen(it.id)}>
+            {it.label}
+          </button>
+        );
+      })}
     </nav>
   );
 }

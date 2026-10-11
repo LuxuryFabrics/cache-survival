@@ -1,6 +1,7 @@
 import { EXPERT_ORDER, EXPERTS, type ExpertMode } from "@cache/core";
 import { useState } from "react";
-import { exportActiveChat, newChat, sendPrompt, setExpert, useCache } from "../hooks";
+import { askField, exportActiveChat, newChat, openLibrary, sendPrompt, setExpert, useCache } from "../hooks";
+import { DESK_STARTERS, FIELD_ACTIONS } from "../lib/field-actions";
 import { recordOnce, transcribeBlob } from "../lib/whisper";
 
 const WASH: Record<ExpertMode, string> = {
@@ -81,25 +82,46 @@ export function Chat() {
       </div>
 
       {empty && (
-        <div className="discover">
-          {EXPERT_ORDER.map((id) => (
-            <button
-              key={id}
-              className="soft-card"
-              onClick={() => setExpert(id)}
-            >
-              <div className={`wash ${WASH[id]}`}>
-                {ICONS[id].map((ic) => (
-                  <span key={ic}>{ic}</span>
-                ))}
-              </div>
-              <div className="body">
-                <h3>{EXPERTS[id].label}</h3>
-                <p>{EXPERTS[id].short}</p>
-              </div>
-            </button>
-          ))}
-        </div>
+        <>
+          <div className="chips" aria-label="Situations">
+            {FIELD_ACTIONS.slice(0, 5).map((a) => (
+              <button
+                key={a.id}
+                className="chip"
+                onClick={() =>
+                  askField(
+                    a.prompt,
+                    a.expert,
+                    a.id === "here" && s.settings.lastKnown
+                      ? { location: { lat: s.settings.lastKnown.lat, lon: s.settings.lastKnown.lon, label: "Last known" } }
+                      : undefined,
+                  )
+                }
+              >
+                {a.label}
+              </button>
+            ))}
+          </div>
+          <div className="discover">
+            {EXPERT_ORDER.map((id) => (
+              <button
+                key={id}
+                className="soft-card"
+                onClick={() => askField(DESK_STARTERS[id], id)}
+              >
+                <div className={`wash ${WASH[id]}`}>
+                  {ICONS[id].map((ic) => (
+                    <span key={ic}>{ic}</span>
+                  ))}
+                </div>
+                <div className="body">
+                  <h3>{EXPERTS[id].label}</h3>
+                  <p>{EXPERTS[id].short}</p>
+                </div>
+              </button>
+            ))}
+          </div>
+        </>
       )}
 
       {!empty && (
@@ -112,10 +134,15 @@ export function Chat() {
               </header>
               <div className="body">{m.content}</div>
               {m.citations?.map((c) => (
-                <div key={c.documentId + c.excerpt} className="cite">
+                <button
+                  key={c.documentId + c.excerpt}
+                  className="cite"
+                  onClick={() => openLibrary(c.documentId)}
+                >
                   <strong>{c.title}</strong> · {c.source}
                   <div>{c.excerpt}</div>
-                </div>
+                  <div className="muted">Open full manual</div>
+                </button>
               ))}
             </article>
           ))}

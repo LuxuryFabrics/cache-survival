@@ -248,13 +248,42 @@ textarea {
 }
 .msg .body { white-space: pre-wrap; color: var(--text); line-height: 1.5; font-size: 14px; }
 .cite {
+  display: block;
+  width: 100%;
   margin-top: 10px;
   padding: 10px 12px;
   border-radius: 12px;
   background: var(--bg-row);
   font-size: 13px;
   color: var(--text-dim);
+  text-align: left;
+  border: 0;
 }
+.loc-chip {
+  border: 0;
+  cursor: pointer;
+  font: inherit;
+}
+.field-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+@media (max-width: 620px) { .field-actions { grid-template-columns: 1fr; } }
+.field-action {
+  background: #fff;
+  border: 0;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  text-align: left;
+  padding: 0;
+  min-height: 88px;
+}
+.field-action .wash { height: 10px; }
+.field-action .body { padding: 14px 16px 16px; }
+.field-action h3 { margin: 0 0 4px; font-size: 16px; }
+.field-action p { margin: 0; font-size: 13px; }
 
 .discover {
   display: grid;

@@ -26,6 +26,7 @@ import { kvGet, kvSet, estimateUsageMb, blobDel } from "../lib/idb";
 import { createWllamaAdapter } from "../lib/wllama";
 
 export type Screen =
+  | "field"
   | "chat"
   | "map"
   | "library"
@@ -33,7 +34,8 @@ export type Screen =
   | "notes"
   | "files"
   | "packs"
-  | "settings";
+  | "settings"
+  | "more";
 
 export interface RuntimeState {
   ready: boolean;
@@ -55,6 +57,9 @@ export interface RuntimeState {
   vaultUnlocked: boolean;
   vaultPassword: string;
   usage: { usedMb: number; quotaMb: number };
+  libraryOpenId: string | null;
+  libraryQuery: string;
+  pendingMapFocus: { lat: number; lon: number; label: string } | null;
 }
 
 const defaultSettings = (): AppSettings => ({
@@ -88,6 +93,9 @@ let state: RuntimeState = {
   vaultUnlocked: false,
   vaultPassword: "",
   usage: { usedMb: 0, quotaMb: 0 },
+  libraryOpenId: null,
+  libraryQuery: "",
+  pendingMapFocus: null,
 };
 
 const listeners = new Set<() => void>();
@@ -165,7 +173,7 @@ export async function boot(): Promise<void> {
       installs: installs ?? {},
       usage,
       statusLine: `${lib.length} manuals · loading places…`,
-      screen: nextSettings.onboarded ? "chat" : "packs",
+      screen: nextSettings.onboarded ? "field" : "packs",
     });
 
     const places = await loadJson<Place[]>("/data/places.json", []);
@@ -184,6 +192,45 @@ export async function boot(): Promise<void> {
 
 export function setScreen(screen: Screen): void {
   patch({ screen });
+}
+
+export function openLibrary(documentId: string, query?: string): void {
+  patch({
+    screen: "library",
+    libraryOpenId: documentId,
+    libraryQuery: query ?? state.libraryQuery,
+  });
+}
+
+export function openLibrarySearch(query: string): void {
+  patch({ screen: "library", libraryQuery: query, libraryOpenId: null });
+}
+
+export function clearLibraryOpen(): void {
+  patch({ libraryOpenId: null });
+}
+
+export function focusMap(lat: number, lon: number, label: string): void {
+  patch({
+    screen: "map",
+    pendingMapFocus: { lat, lon, label },
+    settings: {
+      ...state.settings,
+      lastKnown: { lat, lon, at: Date.now(), source: "manual" },
+    },
+  });
+  void persist();
+}
+
+export function consumeMapFocus(): void {
+  if (state.pendingMapFocus) patch({ pendingMapFocus: null });
+}
+
+export function askField(text: string, mode: ExpertMode, extras?: Partial<GenerateOptions>): void {
+  const settings = { ...state.settings, expertMode: mode };
+  patch({ settings, screen: "chat" });
+  void persist();
+  void sendPrompt(text, { expertMode: mode, ...extras });
 }
 
 export function setExpert(mode: ExpertMode): void {
@@ -316,7 +363,7 @@ export function updateSettings(partial: Partial<AppSettings>): void {
 
 export function markOnboarded(): void {
   updateSettings({ onboarded: true });
-  patch({ screen: "chat" });
+  patch({ screen: "field" });
 }
 
 export function setInstall(status: InstallStatus): void {

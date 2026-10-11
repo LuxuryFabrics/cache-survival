@@ -14,7 +14,7 @@ import {
 import maplibregl from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { useEffect, useRef, useState } from "react";
-import { deletePlace, savePlace, sendPrompt, setScreen, updateSettings, useCache } from "../hooks";
+import { consumeMapFocus, deletePlace, savePlace, sendPrompt, setScreen, updateSettings, useCache } from "../hooks";
 import { isTileMapError, MAP_STYLE } from "../lib/map-style";
 import {
   ensureTileProtocol,
@@ -118,6 +118,13 @@ export function MapView() {
     });
     mapRef.current = map;
     void refreshCacheLabel();
+    const pending = s.pendingMapFocus;
+    if (pending) {
+      map.once("load", () => {
+        map.flyTo({ center: [pending.lon, pending.lat], zoom: SEARCH_ZOOM, essential: true });
+        consumeMapFocus();
+      });
+    }
     return () => {
       map.remove();
       mapRef.current = null;
@@ -136,6 +143,16 @@ export function MapView() {
   useEffect(() => {
     scaleRef.current?.setUnit(s.settings.units === "mi" ? "imperial" : "metric");
   }, [s.settings.units]);
+
+  useEffect(() => {
+    const focus = s.pendingMapFocus;
+    const map = mapRef.current;
+    if (!focus || !map) return;
+    setFix({ lat: focus.lat, lon: focus.lon, label: focus.label });
+    map.flyTo({ center: [focus.lon, focus.lat], zoom: SEARCH_ZOOM, essential: true });
+    void prefetchAround(focus.lat, focus.lon).then(() => void refreshCacheLabel());
+    consumeMapFocus();
+  }, [s.pendingMapFocus]);
 
   async function refreshCacheLabel() {
     try {

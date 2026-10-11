@@ -3,9 +3,11 @@ import { Sidebar, Tabbar } from "./components/Shell";
 import { StatusPills } from "./components/StatusBar";
 import { setOnline, useBoot, useCache } from "./hooks";
 import { Chat } from "./screens/Chat";
+import { Field } from "./screens/Field";
 import { Files } from "./screens/Files";
 import { Library } from "./screens/Library";
 import { MapView } from "./screens/MapView";
+import { More } from "./screens/More";
 import { Notes } from "./screens/Notes";
 import { Packs } from "./screens/Packs";
 import { Settings } from "./screens/Settings";
@@ -37,6 +39,7 @@ export function App() {
             <div className="card">Mounting local library and gazetteer…</div>
           ) : (
             <>
+              {screen === "field" && <Field />}
               {screen === "chat" && <Chat />}
               {screen === "map" && <MapView />}
               {screen === "library" && <Library />}
@@ -45,6 +48,7 @@ export function App() {
               {screen === "files" && <Files />}
               {screen === "packs" && <Packs />}
               {screen === "settings" && <Settings />}
+              {screen === "more" && <More />}
             </>
           )}
         </main>
