@@ -49,6 +49,17 @@ apps/mobile/       # Capacitor / RN notes
 data generation    # scripts/build_data.py
 ```
 
+## Install on a Mac
+
+Step-by-step clone, Homebrew, browser/PWA, Tauri `.app`, and iOS from Xcode: **[docs/MAC.md](docs/MAC.md)**.
+
+```bash
+git clone https://github.com/LuxuryFabrics/cache-survival.git
+cd cache-survival
+npm install
+npm run dev
+```
+
 ## Quick start (web / PWA)
 
 Needs Node 20+ and Python 3.10+ (only to rebuild data).
