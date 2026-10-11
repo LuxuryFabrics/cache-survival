@@ -62,7 +62,7 @@ export function Chat() {
   }
 
   return (
-    <div className="stack">
+    <div className="stack chat-screen">
       <div className="row">
         <div className="page-head">
           <p className="kicker">On-device experts</p>
@@ -73,7 +73,8 @@ export function Chat() {
         <button className="btn ghost" onClick={downloadChat}>Export</button>
       </div>
 
-      <div className="chips" role="tablist" aria-label="Expert mode">
+      <div className="chat-scroll stack">
+      <div className="chips scroll-chips" role="tablist" aria-label="Expert mode">
         {EXPERT_ORDER.map((id) => (
           <button key={id} className={`chip ${mode === id ? "on" : ""}`} onClick={() => setExpert(id)}>
             {EXPERTS[id].label}
@@ -83,7 +84,7 @@ export function Chat() {
 
       {empty && (
         <>
-          <div className="chips" aria-label="Situations">
+          <div className="chips scroll-chips" aria-label="Situations">
             {FIELD_ACTIONS.slice(0, 5).map((a) => (
               <button
                 key={a.id}
@@ -149,6 +150,7 @@ export function Chat() {
           {s.busy && <div className="msg assistant"><div className="body">Working locally…</div></div>}
         </div>
       )}
+      </div>
 
       <div className="composer">
         <textarea

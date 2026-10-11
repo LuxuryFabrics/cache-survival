@@ -99,7 +99,8 @@
   padding: 28px 36px 40px;
 }
 @media (max-width: 860px) {
-  .workspace { padding: 18px 16px 24px; }
+  .workspace { flex: 1; min-height: 0; padding: 14px 14px 18px; }
+  .tabbar { flex: none; }
 }
 
 .page-head { margin-bottom: 8px; }
@@ -125,7 +126,7 @@ h3 { margin: 0 0 6px; font-size: 16px; font-weight: 500; color: var(--ink); }
 p { line-height: 1.5; color: var(--text-dim); font-size: 14px; }
 .lead { color: var(--text); }
 .muted { color: var(--text-dim); font-size: 13px; }
-.mono { font-family: var(--mono); font-size: 12px; color: var(--text-faint); }
+.mono { font-family: var(--mono); font-size: 12px; color: var(--text-faint); overflow-wrap: anywhere; }
 
 .card {
   background: var(--bg-panel);
@@ -377,6 +378,9 @@ textarea {
   position: relative;
   background: #eef1f4;
 }
+.map-stage { position: absolute; inset: 0; }
+.map-canvas { position: absolute; inset: 0; background: #b7d0dc; }
+.map-credit { display: none; margin: 0; }
 .map-tools {
   position: absolute; z-index: 2; left: 12px; top: 12px; right: 12px;
   display: flex; gap: 8px; flex-wrap: wrap;
@@ -453,7 +457,7 @@ textarea {
 .hazard-caution { color: #b45309; }
 .hazard-safe { color: var(--green); }
 .hazard-unknown { color: var(--text-dim); }
-.doc-body { white-space: pre-wrap; color: var(--text); line-height: 1.6; font-size: 14px; }
+.doc-body { white-space: pre-wrap; color: var(--text); line-height: 1.6; font-size: 14px; overflow-wrap: anywhere; }
 .onboard { max-width: 640px; }
 
 .toggle {
@@ -504,17 +508,46 @@ textarea {
   .field-actions { grid-template-columns: 1fr 1fr; gap: 10px; }
   .field-action { min-height: 76px; }
   .scroll-chips {
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    padding-bottom: 4px;
-    -webkit-overflow-scrolling: touch;
+    flex-wrap: wrap;
+    overflow: visible;
+    min-width: 0;
+    max-width: 100%;
   }
-  .scroll-chips .chip { flex: none; }
-  .composer {
-    position: sticky;
-    bottom: 0;
-    z-index: 4;
+  .scroll-chips .chip { flex: none; min-height: 40px; }
+  .stack > * { min-width: 0; max-width: 100%; }
+  .split-head { align-items: flex-start; justify-content: flex-end; }
+  .split-head h3 { flex: 1 1 100%; min-width: 0; }
+  .split-head .spacer { display: none; }
+  input[type="file"] { max-width: 100%; font-size: 14px; }
+  label.row { flex-wrap: wrap; row-gap: 8px; }
+  .list-item .row, .app-row { max-width: 100%; }
+  .workspace { overflow-x: hidden; }
+  .list-item {
+    flex-direction: column;
+    align-items: stretch;
   }
+  .list-item .mono { white-space: normal; text-align: left; }
+  .app[data-screen="chat"] .workspace {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    padding-bottom: 10px;
+  }
+  .chat-screen {
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+  }
+  .chat-scroll {
+    flex: 1;
+    min-height: 0;
+    overflow: auto;
+    padding-bottom: 8px;
+    scrollbar-gutter: stable;
+  }
+  .chat-scroll > * { flex-shrink: 0; min-width: 0; max-width: 100%; }
+  .composer { position: static; flex: none; }
+  .composer textarea { min-height: 72px; }
   .composer .btn { min-height: 44px; }
   .tabbar button { font-size: 12px; }
 
@@ -540,6 +573,32 @@ textarea {
     height: auto;
     min-height: 0;
     border-radius: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .app[data-screen="map"] .map-stage {
+    position: relative;
+    inset: auto;
+    flex: 1;
+    min-height: 0;
+  }
+  .app[data-screen="map"] .map-credit {
+    display: block;
+    flex: none;
+    margin: 0 14px 6px;
+    font-size: 11px;
+    line-height: 1.35;
+    color: var(--text-dim);
+  }
+  .app[data-screen="map"] .map-popup {
+    position: relative;
+    left: auto;
+    right: auto;
+    bottom: auto;
+    flex: none;
+    max-height: 34vh;
+    overflow: auto;
+    margin: 0 10px 10px;
   }
   .map-tools {
     flex-direction: column;
@@ -549,12 +608,15 @@ textarea {
   .map-tools .input { min-width: 0; }
   .map-actions {
     display: flex;
+    flex-wrap: wrap;
     gap: 8px;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
+    min-width: 0;
+    max-width: 100%;
   }
   .map-actions .btn,
-  .map-actions .chip { flex: none; min-height: 40px; }
+  .map-actions .chip { flex: none; min-height: 44px; }
+  .map-popup .btn { min-height: 44px; }
+  .map-popup .row { row-gap: 8px; }
   .gps-row { display: none; }
   .key-only { display: inline-flex; }
   .map-locate {
@@ -563,7 +625,7 @@ textarea {
     position: absolute;
     z-index: 2;
     left: 12px;
-    bottom: 148px;
+    bottom: 12px;
     width: 52px;
     height: 52px;
     border-radius: 50%;
@@ -574,8 +636,10 @@ textarea {
     font-weight: 600;
     box-shadow: var(--shadow);
   }
-  .map-hud { top: auto; left: 72px; right: 56px; bottom: 156px; max-width: none; }
-  .map-zoom { display: inline-block; max-width: 100%; }
+  .map-hud { display: none; }
+  .map-stage .maplibregl-ctrl-attrib { display: none !important; }
+  .map-stage .maplibregl-ctrl-bottom-left { bottom: 16px; left: 74px; }
+  .map-stage .maplibregl-ctrl-bottom-right { bottom: 10px; right: 6px; }
   .land-legend { top: 118px; max-height: 42%; overflow: auto; }
   .map-popup { padding: 12px; }
   .map-popup .ask-long { display: none; }
@@ -583,9 +647,11 @@ textarea {
   .map-popup .ask-short { display: inline; }
   .map-pins {
     display: flex;
+    flex-wrap: wrap;
     gap: 8px;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
+    min-width: 0;
+    max-width: 100%;
   }
-  .map-pins .chip { flex: none; background: #fff; }
+  .map-pins .chip { flex: none; background: #fff; min-height: 40px; }
+  h2, h3, .app-row strong, .list-item strong, .page-head p { overflow-wrap: anywhere; }
 }

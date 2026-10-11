@@ -180,10 +180,10 @@ export function MapView() {
 
   useEffect(() => {
     mapRef.current?.setPadding({
-      top: narrow ? 108 : 56,
-      bottom: narrow ? 150 : 96,
-      left: narrow ? 8 : 8,
-      right: 8,
+      top: narrow ? 118 : 56,
+      bottom: narrow ? 72 : 96,
+      left: narrow ? 16 : 8,
+      right: narrow ? 52 : 8,
     });
   }, [narrow]);
 
@@ -326,40 +326,43 @@ export function MapView() {
             </button>
           </div>
         </div>
-        <button type="button" className="map-locate" onClick={useGps}>GPS</button>
-        <div ref={ref} style={{ height: "100%", background: "#b7d0dc" }} />
-        <div className="map-hud">
-          <div className="map-zoom">
-            {narrow ? `z${zoom.toFixed(1)}` : `z${zoom.toFixed(1)} · ${zoomHint}`}
-            {!narrow && cacheLabel ? ` · ${cacheLabel}` : ""}
-          </div>
-        </div>
-        {showLands && (!narrow || keyOpen) && (
-          <div className="land-legend">
-            <div><i className="swatch priv" /> Private / unmapped</div>
-            <div><i className="swatch blm" /> BLM</div>
-            <div><i className="swatch usfs" /> Forest Service</div>
-            <div><i className="swatch nps" /> Park Service</div>
-            <div><i className="swatch fws" /> Fish & Wildlife</div>
-            <div><i className="swatch dod" /> Defense</div>
-          </div>
-        )}
-        {saving && (
-          <div className="map-progress-card card">
-            <strong>Saving street tiles</strong>
-            <div className="progress" style={{ marginTop: 8 }}>
-              <span style={{ width: `${saving.total ? (100 * saving.done) / saving.total : 0}%` }} />
+        <div className="map-stage">
+          <button type="button" className="map-locate" onClick={useGps}>GPS</button>
+          <div ref={ref} className="map-canvas" />
+          <div className="map-hud">
+            <div className="map-zoom">
+              {narrow ? `z${zoom.toFixed(1)}` : `z${zoom.toFixed(1)} · ${zoomHint}`}
+              {!narrow && cacheLabel ? ` · ${cacheLabel}` : ""}
             </div>
-            <p className="muted">{saving.done} / {saving.total} · OpenFreeMap / OSM</p>
           </div>
-        )}
-        {mapError && (
-          <div className="card" style={{ position: "absolute", inset: 56, zIndex: 1 }}>
-            <h3>Map canvas offline</h3>
-            <p>{mapError}</p>
-            <p className="muted">Use town search and saved places. Street tiles still apply on devices with WebGL.</p>
-          </div>
-        )}
+          {showLands && (!narrow || keyOpen) && (
+            <div className="land-legend">
+              <div><i className="swatch priv" /> Private / unmapped</div>
+              <div><i className="swatch blm" /> BLM</div>
+              <div><i className="swatch usfs" /> Forest Service</div>
+              <div><i className="swatch nps" /> Park Service</div>
+              <div><i className="swatch fws" /> Fish & Wildlife</div>
+              <div><i className="swatch dod" /> Defense</div>
+            </div>
+          )}
+          {saving && (
+            <div className="map-progress-card card">
+              <strong>Saving street tiles</strong>
+              <div className="progress" style={{ marginTop: 8 }}>
+                <span style={{ width: `${saving.total ? (100 * saving.done) / saving.total : 0}%` }} />
+              </div>
+              <p className="muted">{saving.done} / {saving.total} · OpenFreeMap / OSM</p>
+            </div>
+          )}
+          {mapError && (
+            <div className="card" style={{ position: "absolute", inset: 56, zIndex: 1 }}>
+              <h3>Map canvas offline</h3>
+              <p>{mapError}</p>
+              <p className="muted">Use town search and saved places. Street tiles still apply on devices with WebGL.</p>
+            </div>
+          )}
+        </div>
+        <p className="map-credit">© OpenFreeMap · OpenMapTiles · OpenStreetMap</p>
         <div className="map-popup card stack">
           {narrow && s.savedPlaces.length > 0 && hits.length === 0 && (
             <div className="map-pins">

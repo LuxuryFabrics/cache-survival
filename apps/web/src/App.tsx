@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { Sidebar, Tabbar } from "./components/Shell";
 import { StatusPills } from "./components/StatusBar";
 import { setOnline, useBoot, useCache } from "./hooks";
@@ -16,6 +16,11 @@ import { Vision } from "./screens/Vision";
 export function App() {
   useBoot();
   const { ready, screen } = useCache();
+  const workspace = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    workspace.current?.scrollTo(0, 0);
+  }, [screen]);
 
   useEffect(() => {
     const on = () => setOnline(true);
@@ -33,7 +38,7 @@ export function App() {
     <div className="app" data-screen={screen}>
       <Sidebar />
       <div className="main-col">
-        <main className="workspace">
+        <main className="workspace" ref={workspace}>
           <StatusPills />
           {!ready ? (
             <div className="card">Mounting local library and gazetteer…</div>

@@ -20,6 +20,10 @@ export function Library() {
     if (doc) setOpen(doc);
   }, [s.libraryOpenId, s.library]);
 
+  useEffect(() => {
+    document.querySelector(".workspace")?.scrollTo(0, 0);
+  }, [open]);
+
   const hits = useMemo(() => searchDocuments(s.library, q, cat), [s.library, q, cat]);
 
   return (
@@ -29,17 +33,21 @@ export function Library() {
         <h2>Library</h2>
         <p>{s.library.length} public-domain field documents. Search never leaves this device.</p>
       </div>
-      <input className="input" placeholder="Search manuals…" value={q} onChange={(e) => setQ(e.target.value)} />
-      <div className="chips scroll-chips">
-        {CATS.map((c) => (
-          <button key={c} className={`chip ${cat === c ? "on" : ""}`} onClick={() => setCat(c)}>
-            {c === "all" ? "All" : CATEGORY_LABELS[c]}
-          </button>
-        ))}
-      </div>
+      {!open && (
+        <>
+          <input className="input" placeholder="Search manuals…" value={q} onChange={(e) => setQ(e.target.value)} />
+          <div className="chips scroll-chips">
+            {CATS.map((c) => (
+              <button key={c} className={`chip ${cat === c ? "on" : ""}`} onClick={() => setCat(c)}>
+                {c === "all" ? "All" : CATEGORY_LABELS[c]}
+              </button>
+            ))}
+          </div>
+        </>
+      )}
       {open ? (
         <article className="card stack">
-          <div className="row">
+          <div className="row split-head">
             <h3>{open.title}</h3>
             <span className="spacer" />
             <button
