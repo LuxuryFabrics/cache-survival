@@ -255,12 +255,12 @@ export function buildMapStyle(units: "mi" | "km"): StyleSpecification {
         },
         layout: {
           "symbol-placement": "line",
-          "symbol-spacing": 280,
-          "text-size": 11,
+          "symbol-spacing": 180,
+          "text-size": 12,
           "text-font": ["Noto Sans Regular"],
           "text-field": contourLabelField(units),
-          "text-padding": 8,
-          "text-max-angle": 35,
+          "text-padding": 2,
+          "text-max-angle": 80,
         },
       },
       {
