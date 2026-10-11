@@ -7,7 +7,7 @@
 | `LlmAdapter` | `wllama` (llama.cpp WASM) | `llama.rn` | llama.cpp sidecar / wllama |
 | Whisper | whisper.cpp pack + recorder | whisper.rn | whisper.cpp |
 | Blobs | IndexedDB | app documents dir | Tauri app data |
-| Maps | MapLibre GL JS + GeoJSON / PMTiles | MapLibre Native | MapLibre GL JS |
+| Maps | MapLibre GL JS + GeoJSON / OpenFreeMap + IDB tiles | MapLibre Native | MapLibre GL JS |
 | FTS | in-core + optional sql.js | op-sqlite FTS5 | sqlite / sql.js |
 
 Keep air-gap: adapters must not open sockets after `airgap.lock()`.

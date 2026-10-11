@@ -15,66 +15,22 @@ import maplibregl from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { useEffect, useRef, useState } from "react";
 import { deletePlace, savePlace, sendPrompt, setScreen, updateSettings, useCache } from "../hooks";
-
-const STYLE: maplibregl.StyleSpecification = {
-  version: 8,
-  name: "CACHE offline",
-  sources: {
-    world: { type: "geojson", data: "/data/world-110m.geojson" },
-    lands: { type: "geojson", data: "/data/public-lands.geojson" },
-  },
-  layers: [
-    { id: "bg", type: "background", paint: { "background-color": "#e4ecee" } },
-    {
-      id: "land",
-      type: "fill",
-      source: "world",
-      paint: { "fill-color": "#efece3", "fill-outline-color": "#d5d1c6" },
-    },
-    {
-      id: "borders",
-      type: "line",
-      source: "world",
-      paint: { "line-color": "#c8c4b8", "line-width": 0.6 },
-    },
-    {
-      id: "public-fill",
-      type: "fill",
-      source: "lands",
-      paint: {
-        "fill-color": [
-          "match",
-          ["get", "kind"],
-          "blm",
-          "#e6c36a",
-          "usfs",
-          "#6ea36a",
-          "nps",
-          "#2f6b4f",
-          "fws",
-          "#4aa3a0",
-          "dod",
-          "#8a8a7a",
-          "bor",
-          "#7a9bb8",
-          "#8aa37a",
-        ],
-        "fill-opacity": 0.48,
-      },
-    },
-    {
-      id: "public-line",
-      type: "line",
-      source: "lands",
-      paint: { "line-color": "#5c584c", "line-width": 0.4, "line-opacity": 0.35 },
-    },
-  ],
-};
+import { isTileMapError, MAP_STYLE } from "../lib/map-style";
+import {
+  ensureTileProtocol,
+  planSave,
+  prefetchAround,
+  saveRegion,
+  SEARCH_ZOOM,
+  tileStats,
+  type BBox,
+} from "../lib/tiles";
 
 export function MapView() {
   const s = useCache();
   const ref = useRef<HTMLDivElement>(null);
   const mapRef = useRef<maplibregl.Map | null>(null);
+  const scaleRef = useRef<maplibregl.ScaleControl | null>(null);
   const [q, setQ] = useState("");
   const [hits, setHits] = useState<Place[]>([]);
   const [fix, setFix] = useState<{ lat: number; lon: number; label: string } | null>(
@@ -88,6 +44,9 @@ export function MapView() {
   const [showLands, setShowLands] = useState(true);
   const [tenure, setTenure] = useState<LandHit | null>(null);
   const [probed, setProbed] = useState(false);
+  const [zoom, setZoom] = useState(2.2);
+  const [cacheLabel, setCacheLabel] = useState("");
+  const [saving, setSaving] = useState<{ done: number; total: number } | null>(null);
 
   useEffect(() => {
     if (!ref.current || mapRef.current) return;
@@ -99,21 +58,38 @@ export function MapView() {
     }
     let map: maplibregl.Map;
     try {
+      ensureTileProtocol();
       map = new maplibregl.Map({
         container: ref.current,
-        style: STYLE,
+        style: MAP_STYLE,
         center: [fix?.lon ?? -104.99, fix?.lat ?? 39.74],
         zoom: 2.2,
+        minZoom: 1,
+        maxZoom: 16,
         attributionControl: { compact: true },
+        touchPitch: false,
       });
     } catch (err) {
       setMapError(err instanceof Error ? err.message : "MapLibre failed to start");
       return;
     }
     map.on("error", (e) => {
+      const msg = e.error?.message ?? "";
+      const sourceId = "sourceId" in e ? String((e as { sourceId?: string }).sourceId ?? "") : "";
+      if (isTileMapError(msg, sourceId)) return;
       if (e.error) setMapError(e.error.message);
     });
-    map.addControl(new maplibregl.NavigationControl({ showCompass: true }), "bottom-right");
+    const scale = new maplibregl.ScaleControl({
+      maxWidth: 110,
+      unit: s.settings.units === "mi" ? "imperial" : "metric",
+    });
+    scaleRef.current = scale;
+    map.addControl(scale, "bottom-left");
+    map.addControl(new maplibregl.NavigationControl({ showCompass: true, visualizePitch: false }), "bottom-right");
+    const syncZoom = () => setZoom(map.getZoom());
+    map.on("load", syncZoom);
+    map.on("moveend", syncZoom);
+    map.on("zoomend", syncZoom);
     map.on("click", (e) => {
       const lat = e.lngLat.lat;
       const lon = e.lngLat.lng;
@@ -141,9 +117,11 @@ export function MapView() {
       setInfo(`Ask AI about ${lat.toFixed(3)}, ${lon.toFixed(3)}`);
     });
     mapRef.current = map;
+    void refreshCacheLabel();
     return () => {
       map.remove();
       mapRef.current = null;
+      scaleRef.current = null;
     };
   }, []);
 
@@ -155,10 +133,31 @@ export function MapView() {
     map.setLayoutProperty("public-line", "visibility", vis);
   }, [showLands]);
 
+  useEffect(() => {
+    scaleRef.current?.setUnit(s.settings.units === "mi" ? "imperial" : "metric");
+  }, [s.settings.units]);
+
+  async function refreshCacheLabel() {
+    try {
+      const stats = await tileStats();
+      if (stats.count === 0) setCacheLabel("");
+      else setCacheLabel(`${stats.count.toLocaleString()} tiles cached`);
+    } catch {
+      setCacheLabel("");
+    }
+  }
+
+  function visibleBbox(): BBox | null {
+    const b = mapRef.current?.getBounds();
+    if (!b) return null;
+    return { west: b.getWest(), south: b.getSouth(), east: b.getEast(), north: b.getNorth() };
+  }
+
   function fly(lat: number, lon: number, label: string) {
     setFix({ lat, lon, label });
-    mapRef.current?.flyTo({ center: [lon, lat], zoom: 6, essential: true });
+    mapRef.current?.flyTo({ center: [lon, lat], zoom: SEARCH_ZOOM, essential: true });
     updateSettings({ lastKnown: { lat, lon, at: Date.now(), source: "manual" } });
+    void prefetchAround(lat, lon).then(() => void refreshCacheLabel());
   }
 
   function useGps() {
@@ -177,6 +176,44 @@ export function MapView() {
       { enableHighAccuracy: false, timeout: 4000 },
     );
   }
+
+  async function saveThisView() {
+    const map = mapRef.current;
+    const bbox = visibleBbox();
+    if (!map || !bbox) {
+      setInfo("Map is not ready.");
+      return;
+    }
+    const plan = planSave(bbox, map.getZoom());
+    if (!plan.ok) {
+      setInfo(plan.reason);
+      return;
+    }
+    setSaving({ done: 0, total: plan.count });
+    try {
+      const result = await saveRegion(bbox, {
+        minZ: plan.minZ,
+        maxZ: plan.maxZ,
+        onProgress: (done, total) => setSaving({ done, total }),
+      });
+      const missed = result.failed ? ` ${result.failed} missed (need network or unlock air-gap).` : "";
+      setInfo(`Saved ${result.saved} new tiles, ${result.cached} already on device.${missed}`);
+    } catch (err) {
+      setInfo(err instanceof Error ? err.message : "Could not save this view.");
+    } finally {
+      setSaving(null);
+      void refreshCacheLabel();
+    }
+  }
+
+  const zoomHint =
+    zoom < 7
+      ? "Overview — zoom in for streets and water"
+      : zoom < 11
+        ? "Highways and rivers — keep zooming for streets"
+        : zoom < 13
+          ? "Street detail"
+          : "Buildings and alleys";
 
   return (
     <div className="stack">
@@ -209,8 +246,17 @@ export function MapView() {
           <button className={`chip ${showLands ? "on" : ""}`} onClick={() => setShowLands((v) => !v)}>
             Public land
           </button>
+          <button className="btn primary" onClick={() => void saveThisView()} disabled={!!saving}>
+            {saving ? `Saving ${saving.done}/${saving.total}` : "Save this view"}
+          </button>
         </div>
         <div ref={ref} style={{ height: "100%", background: "#e4ecee" }} />
+        <div className="map-hud">
+          <div className="map-zoom">
+            z{zoom.toFixed(1)} · {zoomHint}
+            {cacheLabel ? ` · ${cacheLabel}` : ""}
+          </div>
+        </div>
         {showLands && (
           <div className="land-legend">
             <div><i className="swatch priv" /> Private / unmapped</div>
@@ -221,11 +267,20 @@ export function MapView() {
             <div><i className="swatch dod" /> Defense</div>
           </div>
         )}
+        {saving && (
+          <div className="map-progress-card card">
+            <strong>Saving street tiles</strong>
+            <div className="progress" style={{ marginTop: 8 }}>
+              <span style={{ width: `${saving.total ? (100 * saving.done) / saving.total : 0}%` }} />
+            </div>
+            <p className="muted">{saving.done} / {saving.total} · OpenFreeMap / OSM</p>
+          </div>
+        )}
         {mapError && (
           <div className="card" style={{ position: "absolute", inset: 56, zIndex: 1 }}>
             <h3>Map canvas offline</h3>
             <p>{mapError}</p>
-            <p className="muted">Use town search and saved places. Street-level PMTiles packs still apply on devices with WebGL.</p>
+            <p className="muted">Use town search and saved places. Street tiles still apply on devices with WebGL.</p>
           </div>
         )}
         <div className="map-popup card stack">

@@ -9,7 +9,7 @@ CACHE is the USB-drive “survival AI” idea without the proprietary brick: you
 - **Expert chat** with eight desks (Survival, Medic, Navigation, Food & Water, Shelter, Repair, General, Creative).
 - **Graceful answers with no LLM**: extractive RAG over the bundled library, with citations.
 - **Optional local GGUF** via llama.cpp (`wllama` WASM in the web/desktop shell; `llama.rn` / native sidecar on mobile & Tauri).
-- **Offline maps**: MapLibre GL + Natural Earth world polygons, pin drop, distance (mi/km), saved places, 34,000+ town search, “Ask AI about this location.” Works with last-known or a manual pin — GNSS is optional.
+- **Offline maps**: MapLibre GL + Natural Earth world polygons, OpenFreeMap street/water/building tiles as you zoom, pin drop, distance (mi/km), saved places, 34,000+ town search, public-land overlay, “Save this view,” “Ask AI about this location.” Works with last-known or a manual pin — GNSS is optional.
 - **Survival library**: 70+ public-domain / CC0 field documents (FEMA, CDC, U.S. Army FM adaptations + original notes), local full-text search.
 - **Your files**: import text/PDF → on-device chunks → chat can cite them.
 - **Encrypted notes**: AES-256-GCM, PBKDF2-SHA-256 (210k), password only on device.
@@ -29,7 +29,7 @@ The bundled library is a reliable core, not 10k PDFs. The pack format is how you
 | UI | React 19 + Vite PWA (tactical dark UI, large targets) |
 | Chat inference | llama.cpp — GGUF via `wllama` (web) / `llama.rn` (mobile) / Tauri sidecar (desktop) |
 | Speech | whisper.cpp (`ggml-tiny.en`, `small.en`) |
-| Maps | MapLibre GL, GeoJSON / MBTiles / PMTiles packs |
+| Maps | MapLibre GL, GeoJSON + OpenFreeMap vector tiles (IndexedDB cache) |
 | Search | In-core FTS-style ranking; SQLite FTS5-ready (op-sqlite / sql.js) |
 | Notes | Web Crypto AES-256-GCM |
 | Desktop | Tauri 2 wrapping the same UI |
@@ -120,13 +120,15 @@ Optional: point a llama.cpp sidecar at the same GGUF files in the user data dir 
 
 ## Offline maps (street-level)
 
-The base map is a world overview (enough to navigate continents and find 34k towns). Street-level OSM is a **pack**:
+The base map is a world overview (enough to navigate continents and find 34k towns). Zoom in (search a town, pinch, or the + control) to load **streets, water, and buildings** from [OpenFreeMap](https://openfreemap.org/) OpenMapTiles (max zoom 14, overzoom to 16).
 
-- Format: [PMTiles](https://docs.protomaps.com/) or MBTiles
-- Style: MapLibre
-- Source: OpenStreetMap (ODbL) via Protomaps builds
+- Tiles write through to IndexedDB as you browse
+- **Save this view** keeps the current bbox (z8–14, capped at ~4,000 tiles) for air-gap use
+- After **Lock air-gap**, only cached tiles render — zoom a saved town and streets stay
+- Source: OpenStreetMap (ODbL) via OpenFreeMap / OpenMapTiles
+- Do not bake a planetary street tileset into the base APK
 
-Drop a region file into the pack manager (US streets is catalogued). Do not bake a planetary street tileset into the base APK.
+A town search flies to zoom 12 so roads are visible. Wide continent frames cannot be saved; zoom to a valley or city first.
 
 ### Public vs private land
 

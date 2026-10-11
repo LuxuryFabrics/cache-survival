@@ -1,11 +1,12 @@
 import { openDB, type IDBPDatabase } from "idb";
 
 const DB = "cache-survival";
-const VERSION = 1;
+const VERSION = 2;
 
 export type CacheDB = IDBPDatabase<{
   kv: { key: string; value: unknown };
   blobs: { key: string; value: Blob };
+  tiles: { key: string; value: ArrayBuffer };
 }>;
 
 let dbPromise: Promise<CacheDB> | null = null;
@@ -16,6 +17,7 @@ export function db(): Promise<CacheDB> {
       upgrade(database) {
         if (!database.objectStoreNames.contains("kv")) database.createObjectStore("kv");
         if (!database.objectStoreNames.contains("blobs")) database.createObjectStore("blobs");
+        if (!database.objectStoreNames.contains("tiles")) database.createObjectStore("tiles");
       },
     }) as Promise<CacheDB>;
   }
@@ -54,6 +56,27 @@ export async function blobDel(id: string): Promise<void> {
 export async function blobSize(id: string): Promise<number> {
   const b = await blobGet(id);
   return b?.size ?? 0;
+}
+
+export async function tileGet(key: string): Promise<ArrayBuffer | undefined> {
+  return (await db()).get("tiles", key) as Promise<ArrayBuffer | undefined>;
+}
+
+export async function tileSet(key: string, data: ArrayBuffer): Promise<void> {
+  const database = await db();
+  const existing = (await database.get("tiles", key)) as ArrayBuffer | undefined;
+  await database.put("tiles", data, key);
+  const stats = (await kvGet<{ count: number; bytes: number }>("tiles:stats")) ?? { count: 0, bytes: 0 };
+  if (existing) stats.bytes += data.byteLength - existing.byteLength;
+  else {
+    stats.count += 1;
+    stats.bytes += data.byteLength;
+  }
+  await kvSet("tiles:stats", stats);
+}
+
+export async function tileStats(): Promise<{ count: number; bytes: number }> {
+  return (await kvGet<{ count: number; bytes: number }>("tiles:stats")) ?? { count: 0, bytes: 0 };
 }
 
 export async function estimateUsageMb(): Promise<{ usedMb: number; quotaMb: number }> {

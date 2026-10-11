@@ -346,11 +346,35 @@ textarea {
   display: flex; gap: 8px; flex-wrap: wrap;
 }
 .map-popup { position: absolute; z-index: 3; left: 12px; bottom: 12px; right: 12px; }
+.map-hud {
+  position: absolute;
+  z-index: 2;
+  right: 12px;
+  top: 108px;
+  max-width: min(280px, calc(100% - 160px));
+}
+.map-zoom {
+  background: #fff;
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: 12px;
+  box-shadow: var(--shadow);
+  color: var(--text-dim);
+  line-height: 1.3;
+}
+.map-progress-card {
+  position: absolute;
+  z-index: 4;
+  left: 12px;
+  right: 12px;
+  top: 108px;
+  max-width: 360px;
+}
 .land-legend {
   position: absolute;
   z-index: 2;
   left: 12px;
-  top: 64px;
+  top: 108px;
   background: #fff;
   border-radius: 14px;
   padding: 10px 12px;

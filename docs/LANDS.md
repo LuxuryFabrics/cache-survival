@@ -20,6 +20,8 @@ Units smaller than about **50 km²** are dropped so the file stays phone-friendl
 
 Tap a polygon: **Public · agency**. Tap cream land: **Private or unmapped**. “Ask AI about this location” includes that sentence.
 
+Street, water, and building detail comes from OpenFreeMap (OSM) tiles under this overlay. Zoom a town to ~12+; use **Save this view** before locking the air-gap.
+
 ## What it is not
 
 - Not county parcels or “who owns this lot.”

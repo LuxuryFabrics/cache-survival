@@ -104,7 +104,7 @@ In Xcode: pick your Team, then Run on a device or Simulator. For phone-speed inf
 | SmolLM2 360M Q4 | ~260 MB | Best first chat model |
 | Llama 3.2 1B Q4 | ~770 MB | Stronger small model |
 | whisper.cpp tiny.en | ~75 MB | Offline voice |
-| US street PMTiles | many GB | Optional; Wi-Fi + spare disk |
+| Street tiles (Save this view) | tens of MB per city | OpenFreeMap / OSM, cached in IndexedDB |
 
 Downloads go into the app’s IndexedDB / app-data folder. Delete unused packs in **Packs** to free space.
 
@@ -119,6 +119,7 @@ Downloads go into the app’s IndexedDB / app-data folder. Delete unused packs i
 
 - **`npm: command not found`** — `brew install node` and open a new Terminal.
 - **Blank map** — Safari/Chrome need WebGL. Town search and “Ask AI about this location” still work without it.
+- **No streets when zoomed in** — browse once online, or search a town then **Save this view**. After air-gap lock, only cached tiles show detail.
 - **Notes won’t unlock** — wrong password. There is no recovery channel (AES-256 on-device only).
 - **Port 5173 in use** — `npm run dev -w @cache/web -- --port 5174`
 - **Python / GeoNames rebuild fails** — skip it; committed `public/data` is enough to run.
