@@ -8,8 +8,8 @@ export const MAP_STYLE: StyleSpecification = {
   version: 8,
   name: "CACHE offline",
   sources: {
-    world: { type: "geojson", data: "/data/world-110m.geojson" },
-    lakes: { type: "geojson", data: "/data/lakes.geojson" },
+    world: { type: "geojson", data: "/data/world-110m.geojson", tolerance: 0 },
+    lakes: { type: "geojson", data: "/data/lakes.geojson", tolerance: 0 },
     lands: { type: "geojson", data: "/data/public-lands.geojson" },
     ofm: {
       type: "vector",
@@ -20,7 +20,7 @@ export const MAP_STYLE: StyleSpecification = {
     },
   },
   layers: [
-    { id: "bg", type: "background", paint: { "background-color": "#e4ecee" } },
+    { id: "bg", type: "background", paint: { "background-color": "#b7d0dc" } },
     {
       id: "land",
       type: "fill",
@@ -62,7 +62,7 @@ export const MAP_STYLE: StyleSpecification = {
       id: "ne-lakes",
       type: "fill",
       source: "lakes",
-      paint: { "fill-color": "#b9d4de", "fill-outline-color": "#9bbfcd" },
+      paint: { "fill-color": "#8ebfd2", "fill-outline-color": "#6aa8bf" },
     },
     {
       id: "public-fill",
@@ -94,7 +94,7 @@ export const MAP_STYLE: StyleSpecification = {
       type: "fill",
       source: "ofm",
       "source-layer": "water",
-      paint: { "fill-color": "#b9d4de" },
+      paint: { "fill-color": "#8ebfd2" },
     },
     {
       id: "ofm-waterway",

@@ -121,7 +121,7 @@ Optional: point a llama.cpp sidecar at the same GGUF files in the user data dir 
 
 ## Offline maps (street-level)
 
-The base map is a world overview (enough to navigate continents and find 34k towns). Zoom in (search a town, pinch, or the + control) to load **streets, water, and buildings** from [OpenFreeMap](https://openfreemap.org/) OpenMapTiles (max zoom 14, overzoom to 16).
+The base map is a world overview (enough to navigate continents and find 34k towns). Country polygons have the Great Lakes and other major lakes cut out, so Michigan and the other lake shores stay water even at world zoom. Zoom in (search a town, pinch, or the + control) to load **streets, water, and buildings** from [OpenFreeMap](https://openfreemap.org/) OpenMapTiles (max zoom 14, overzoom to 16).
 
 - Tiles write through to IndexedDB as you browse
 - **Save this view** keeps the current bbox (z8–14, capped at ~4,000 tiles) for air-gap use

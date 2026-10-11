@@ -88,6 +88,7 @@ export function MapView() {
     map.addControl(new maplibregl.NavigationControl({ showCompass: true, visualizePitch: false }), "bottom-right");
     const syncZoom = () => setZoom(map.getZoom());
     map.on("load", syncZoom);
+    map.on("move", syncZoom);
     map.on("moveend", syncZoom);
     map.on("zoomend", syncZoom);
     map.on("click", (e) => {
@@ -267,7 +268,7 @@ export function MapView() {
             {saving ? `Saving ${saving.done}/${saving.total}` : "Save this view"}
           </button>
         </div>
-        <div ref={ref} style={{ height: "100%", background: "#e4ecee" }} />
+        <div ref={ref} style={{ height: "100%", background: "#b7d0dc" }} />
         <div className="map-hud">
           <div className="map-zoom">
             z{zoom.toFixed(1)} · {zoomHint}

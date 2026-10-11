@@ -1095,6 +1095,57 @@ def download_world(dest: Path) -> None:
         }))
 
 
+def cut_lakes_from_countries(world_path: Path, lakes_path: Path) -> None:
+    """Punch lake polygons out of country land so the Great Lakes stay water at world zoom.
+
+    Natural Earth admin-0 fills inland seas. A separate lake overlay gets simplified
+    away at low zoom and Michigan disappears into a solid blob.
+    """
+    try:
+        from shapely.geometry import shape, mapping
+        from shapely.ops import unary_union
+        from shapely.validation import make_valid
+    except ImportError:
+        print("shapely missing; leaving country polygons uncut")
+        return
+    if not world_path.exists() or not lakes_path.exists():
+        print("skip lake cut; world or lakes file missing")
+        return
+    world = json.loads(world_path.read_text())
+    lakes = json.loads(lakes_path.read_text())
+    lake_geoms = []
+    for f in lakes.get("features", []):
+        geom = f.get("geometry")
+        if not geom:
+            continue
+        g = make_valid(shape(geom))
+        if not g.is_empty:
+            lake_geoms.append(g)
+    if not lake_geoms:
+        return
+    water = unary_union(lake_geoms)
+    cut_n = 0
+    for f in world.get("features", []):
+        geom = f.get("geometry")
+        if not geom:
+            continue
+        g = make_valid(shape(geom))
+        if not g.intersects(water):
+            continue
+        diff = make_valid(g.difference(water))
+        if diff.is_empty:
+            continue
+        if diff.geom_type == "GeometryCollection":
+            polys = [p for p in diff.geoms if p.geom_type in ("Polygon", "MultiPolygon")]
+            if not polys:
+                continue
+            diff = unary_union(polys)
+        f["geometry"] = mapping(diff)
+        cut_n += 1
+    world_path.write_text(json.dumps(world, separators=(",", ":")))
+    print(f"Cut lakes from {cut_n} countries -> {world_path} ({world_path.stat().st_size} bytes)")
+
+
 def download_lakes(dest: Path) -> None:
     """Natural Earth 50m lakes — Great Lakes and other inland seas the 110m countries fill as land."""
     url = "https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_50m_lakes.geojson"
@@ -1129,6 +1180,7 @@ def main() -> None:
 
     download_world(OUT / "world-110m.geojson")
     download_lakes(OUT / "lakes.geojson")
+    cut_lakes_from_countries(OUT / "world-110m.geojson", OUT / "lakes.geojson")
 
     meta = {
         "libraryCount": len(docs),
