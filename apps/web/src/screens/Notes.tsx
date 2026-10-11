@@ -34,10 +34,10 @@ export function Notes() {
 
   return (
     <div className="stack">
-      <div>
-        <p className="kicker">AES-256-GCM · PBKDF2</p>
-        <h2>Encrypted notes</h2>
-        <p>Password stays on this device. Wrong password yields ciphertext, never a cloud reset.</p>
+      <div className="page-head">
+        <p className="kicker">AES-256-GCM</p>
+        <h2>Notes</h2>
+        <p>Password stays on this device. There is no cloud reset.</p>
       </div>
       <div className="grid-2">
         <div className="card stack">

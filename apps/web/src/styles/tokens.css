@@ -1,35 +1,43 @@
 :root {
-  --bg: #0b0d0b;
-  --bg-elev: #121612;
-  --bg-panel: #171c17;
-  --bg-input: #0e120e;
-  --line: #2b332b;
-  --line-strong: #3d4a38;
-  --text: #e7eadc;
-  --text-dim: #9aa38c;
-  --text-faint: #6b735f;
-  --amber: #e3a31a;
-  --amber-dim: #8a6410;
-  --green: #7ea45a;
-  --green-deep: #3d5a2c;
-  --red: #d45c3a;
-  --red-dim: #6e2c1c;
-  --sun: #f4e7b4;
-  --shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
-  --radius: 14px;
-  --touch: 48px;
-  --font: "IBM Plex Sans", "Segoe UI", "Helvetica Neue", sans-serif;
-  --mono: "IBM Plex Mono", "ui-monospace", "SFMono-Regular", Menlo, Consolas, monospace;
+  --bg: #f4f4f2;
+  --bg-elev: #ffffff;
+  --bg-panel: #ffffff;
+  --bg-input: #f7f7f5;
+  --bg-chip: #eeeeec;
+  --bg-row: #f6f6f4;
+  --line: #ebebea;
+  --line-strong: #e2e2e0;
+  --text: #292929;
+  --text-dim: #5d5d5d;
+  --text-faint: #9e9e9e;
+  --ink: #171717;
+  --amber: #292929;
+  --amber-dim: #5d5d5d;
+  --green: #15b042;
+  --green-deep: #caface;
+  --red: #e11d48;
+  --red-dim: #ffe4e6;
+  --sun: #292929;
+  --blue: #0077e6;
+  --shadow: 0 8px 28px rgba(17, 17, 17, 0.06);
+  --radius: 16px;
+  --radius-lg: 22px;
+  --radius-pill: 999px;
+  --touch: 40px;
+  --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", "Helvetica Neue", sans-serif;
+  --mono: "SF Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  --track: -0.15px;
 }
 
 html[data-contrast="high"] {
-  --bg: #000;
-  --bg-elev: #0a0a0a;
-  --bg-panel: #111;
-  --text: #fff;
-  --text-dim: #ddd;
-  --line: #888;
-  --amber: #ffcc33;
+  --bg: #fff;
+  --bg-elev: #fff;
+  --bg-panel: #fff;
+  --text: #000;
+  --text-dim: #222;
+  --text-faint: #444;
+  --line: #bbb;
+  --ink: #000;
 }
 
 * { box-sizing: border-box; }
@@ -38,8 +46,9 @@ body {
   font-family: var(--font);
   background: var(--bg);
   color: var(--text);
+  letter-spacing: var(--track);
   -webkit-font-smoothing: antialiased;
 }
-button, input, textarea, select { font: inherit; color: inherit; }
+button, input, textarea, select { font: inherit; color: inherit; letter-spacing: var(--track); }
 button { cursor: pointer; }
-a { color: var(--amber); }
+a { color: var(--ink); }

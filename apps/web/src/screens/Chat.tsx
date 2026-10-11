@@ -1,13 +1,36 @@
 import { EXPERT_ORDER, EXPERTS, type ExpertMode } from "@cache/core";
 import { useState } from "react";
-import { exportActiveChat, newChat, selectChat, sendPrompt, setExpert, useCache } from "../hooks";
+import { exportActiveChat, newChat, sendPrompt, setExpert, useCache } from "../hooks";
 import { recordOnce, transcribeBlob } from "../lib/whisper";
+
+const WASH: Record<ExpertMode, string> = {
+  survival: "g-mint",
+  medic: "g-rose",
+  navigation: "g-sky",
+  "food-water": "g-lemon",
+  shelter: "g-sand",
+  repair: "g-lav",
+  general: "g-ice",
+  creative: "g-peach",
+};
+
+const ICONS: Record<ExpertMode, string[]> = {
+  survival: ["⚑", "◎", "✦"],
+  medic: ["✚", "♡", "◎"],
+  navigation: ["◎", "△", "↕"],
+  "food-water": ["◌", "≈", "✦"],
+  shelter: ["⌂", "△", "☾"],
+  repair: ["⚒", "✎", "✦"],
+  general: ["✦", "☰", "○"],
+  creative: ["✺", "✎", "✦"],
+};
 
 export function Chat() {
   const s = useCache();
   const [text, setText] = useState("");
   const convo = s.conversations.find((c) => c.id === s.activeConvoId) ?? s.conversations[0];
   const mode = (s.settings.expertMode as ExpertMode) ?? "survival";
+  const empty = !convo?.messages.length;
 
   async function onSend() {
     const t = text;
@@ -40,14 +63,15 @@ export function Chat() {
   return (
     <div className="stack">
       <div className="row">
-        <div>
-          <p className="kicker">Offline desk</p>
-          <h2>Expert chat</h2>
+        <div className="page-head">
+          <p className="kicker">On-device experts</p>
+          <h2>Chat</h2>
         </div>
         <span className="spacer" />
-        <button className="btn ghost" onClick={newChat}>New brief</button>
+        <button className="btn ghost" onClick={newChat}>New</button>
         <button className="btn ghost" onClick={downloadChat}>Export</button>
       </div>
+
       <div className="chips" role="tablist" aria-label="Expert mode">
         {EXPERT_ORDER.map((id) => (
           <button key={id} className={`chip ${mode === id ? "on" : ""}`} onClick={() => setExpert(id)}>
@@ -55,41 +79,53 @@ export function Chat() {
           </button>
         ))}
       </div>
-      <p className="muted">{EXPERTS[mode].system.slice(0, 180)}…</p>
 
-      {s.conversations.length > 1 && (
-        <div className="chips">
-          {s.conversations.slice(0, 8).map((c) => (
-            <button key={c.id} className={`chip ${c.id === convo?.id ? "on" : ""}`} onClick={() => selectChat(c.id)}>
-              {c.title}
+      {empty && (
+        <div className="discover">
+          {EXPERT_ORDER.map((id) => (
+            <button
+              key={id}
+              className="soft-card"
+              onClick={() => setExpert(id)}
+            >
+              <div className={`wash ${WASH[id]}`}>
+                {ICONS[id].map((ic) => (
+                  <span key={ic}>{ic}</span>
+                ))}
+              </div>
+              <div className="body">
+                <h3>{EXPERTS[id].label}</h3>
+                <p>{EXPERTS[id].short}</p>
+              </div>
             </button>
           ))}
         </div>
       )}
 
-      <div className="stack">
-        {convo?.messages.map((m) => (
-          <article key={m.id} className={`msg ${m.role}`}>
-            <header>
-              <span>{m.role === "user" ? "YOU" : "CACHE"}</span>
-              <span>{new Date(m.createdAt).toLocaleTimeString()}</span>
-            </header>
-            <div className="body">{m.content}</div>
-            {m.citations?.map((c) => (
-              <div key={c.documentId + c.excerpt} className="cite">
-                <strong>{c.title}</strong> · {c.source}
-                <div>{c.excerpt}</div>
-              </div>
-            ))}
-          </article>
-        ))}
-        {s.busy && <div className="msg assistant"><div className="body">Working locally…</div></div>}
-      </div>
+      {!empty && (
+        <div className="stack">
+          {convo?.messages.map((m) => (
+            <article key={m.id} className={`msg ${m.role}`}>
+              <header>
+                <span>{m.role === "user" ? "You" : "CACHE"}</span>
+                <span>{new Date(m.createdAt).toLocaleTimeString()}</span>
+              </header>
+              <div className="body">{m.content}</div>
+              {m.citations?.map((c) => (
+                <div key={c.documentId + c.excerpt} className="cite">
+                  <strong>{c.title}</strong> · {c.source}
+                  <div>{c.excerpt}</div>
+                </div>
+              ))}
+            </article>
+          ))}
+          {s.busy && <div className="msg assistant"><div className="body">Working locally…</div></div>}
+        </div>
+      )}
 
-      <div className="card stack">
+      <div className="composer">
         <textarea
-          className="input"
-          placeholder="Ask the field library — bleeding, water, bearings, shelter…"
+          placeholder="Ask about water, bleeding, bearings, shelter…"
           value={text}
           onChange={(e) => setText(e.target.value)}
           onKeyDown={(e) => {
@@ -101,7 +137,7 @@ export function Chat() {
             Send
           </button>
           <button className="btn" onClick={() => void onVoice()}>Voice</button>
-          <span className="muted">Ctrl/⌘ + Enter · citations from on-device manuals</span>
+          <span className="muted">⌘/Ctrl + Enter · cites local manuals</span>
         </div>
       </div>
     </div>

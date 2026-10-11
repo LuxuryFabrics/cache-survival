@@ -14,10 +14,10 @@ export function Library() {
 
   return (
     <div className="stack">
-      <div>
-        <p className="kicker">FTS · on device</p>
-        <h2>Survival library</h2>
-        <p>{library.length} public-domain / open field documents. Full-text search never leaves this device.</p>
+      <div className="page-head">
+        <p className="kicker">On device</p>
+        <h2>Library</h2>
+        <p>{library.length} public-domain field documents. Search never leaves this device.</p>
       </div>
       <input className="input" placeholder="Search manuals…" value={q} onChange={(e) => setQ(e.target.value)} />
       <div className="chips">

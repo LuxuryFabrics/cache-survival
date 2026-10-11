@@ -8,7 +8,7 @@ export function Settings() {
 
   return (
     <div className="stack">
-      <div>
+      <div className="page-head">
         <p className="kicker">Local only</p>
         <h2>Settings</h2>
       </div>
@@ -17,20 +17,24 @@ export function Settings() {
           <h3>Air-gap</h3>
           <p>After packs are on disk, lock the network. Chat, maps, library, notes, and vision must not call home.</p>
           <label className="row">
+            Lock air-gap
+            <span className="spacer" />
             <input
+              className="toggle"
               type="checkbox"
               checked={s.settings.airgapLocked}
               onChange={(e) => updateSettings({ airgapLocked: e.target.checked })}
             />
-            Lock air-gap (block remote fetch)
           </label>
           <label className="row">
+            Debug blocked requests
+            <span className="spacer" />
             <input
+              className="toggle"
               type="checkbox"
               checked={s.settings.airgapDebug}
               onChange={(e) => updateSettings({ airgapDebug: e.target.checked })}
             />
-            Debug: log blocked network attempts
           </label>
           {gap.attempts.slice(-8).reverse().map((a, i) => (
             <div key={i} className="mono">
@@ -41,12 +45,14 @@ export function Settings() {
         <div className="card stack">
           <h3>Display & units</h3>
           <label className="row">
+            High contrast
+            <span className="spacer" />
             <input
+              className="toggle"
               type="checkbox"
               checked={s.settings.highContrast}
               onChange={(e) => updateSettings({ highContrast: e.target.checked })}
             />
-            High contrast (bright sun)
           </label>
           <div className="row">
             <button className="btn" onClick={() => updateSettings({ units: "mi" })}>Miles</button>

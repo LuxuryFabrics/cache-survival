@@ -1,6 +1,6 @@
 import { useEffect } from "react";
-import { Nav, Tabbar } from "./components/Shell";
-import { StatusBar } from "./components/StatusBar";
+import { Sidebar, Tabbar } from "./components/Shell";
+import { StatusPills } from "./components/StatusBar";
 import { setOnline, useBoot, useCache } from "./hooks";
 import { Chat } from "./screens/Chat";
 import { Files } from "./screens/Files";
@@ -27,32 +27,29 @@ export function App() {
     };
   }, []);
 
-  if (!ready) {
-    return (
-      <div className="app">
-        <StatusBar />
-        <main className="main"><div className="card">Mounting local library and gazetteer…</div></main>
-      </div>
-    );
-  }
-
   return (
     <div className="app">
-      <StatusBar />
-      <div className="shell">
-        <Nav />
-        <main className="main">
-          {screen === "chat" && <Chat />}
-          {screen === "map" && <MapView />}
-          {screen === "library" && <Library />}
-          {screen === "vision" && <Vision />}
-          {screen === "notes" && <Notes />}
-          {screen === "files" && <Files />}
-          {screen === "packs" && <Packs />}
-          {screen === "settings" && <Settings />}
+      <Sidebar />
+      <div style={{ display: "flex", flexDirection: "column", minWidth: 0, minHeight: 0 }}>
+        <main className="workspace">
+          <StatusPills />
+          {!ready ? (
+            <div className="card">Mounting local library and gazetteer…</div>
+          ) : (
+            <>
+              {screen === "chat" && <Chat />}
+              {screen === "map" && <MapView />}
+              {screen === "library" && <Library />}
+              {screen === "vision" && <Vision />}
+              {screen === "notes" && <Notes />}
+              {screen === "files" && <Files />}
+              {screen === "packs" && <Packs />}
+              {screen === "settings" && <Settings />}
+            </>
+          )}
         </main>
+        <Tabbar />
       </div>
-      <Tabbar />
     </div>
   );
 }

@@ -6,21 +6,21 @@ function useAirgap() {
   return useSyncExternalStore(airgap.subscribeStore, airgap.getSnapshot, airgap.getSnapshot);
 }
 
-export function StatusBar() {
+export function StatusPills() {
   const s = useCache();
   const gap = useAirgap();
   const model = activeModelLabel();
+  const offline = gap.locked || !s.online;
   return (
-    <header className="status">
-      <h1>CACHE</h1>
-      <span className={`badge ${s.online && !gap.locked ? "warn" : "live"}`}>
-        <span className={`dot ${s.online && !gap.locked ? "off" : ""}`} />
-        {gap.locked ? "AIR-GAP" : s.online ? "NET OPEN" : "OFFLINE"}
+    <div className="row" style={{ marginBottom: 18 }}>
+      <span className={`badge ${offline ? "" : "warn"}`}>
+        <span className={`dot ${offline ? "" : "off"}`} />
+        {gap.locked ? "Air-gap" : s.online ? "Net open" : "Offline"}
       </span>
-      <span className="badge">{model}</span>
-      {gap.debug && <span className="badge hot">DEBUG {gap.attempts.filter((a) => a.blocked).length} blocked</span>}
+      <span className="badge quiet">{model}</span>
+      {gap.debug && <span className="badge hot">Debug {gap.attempts.filter((a) => a.blocked).length}</span>}
       <span className="spacer" />
-      <span className="badge">{s.statusLine}</span>
-    </header>
+      <span className="muted">{s.statusLine}</span>
+    </div>
   );
 }

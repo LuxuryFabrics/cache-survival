@@ -10,6 +10,23 @@ import { useMemo } from "react";
 import { createDownloadAdapter } from "../lib/downloader";
 import { forgetPack, markOnboarded, setInstall, updateSettings, useCache } from "../hooks";
 
+const ICO: Record<string, string> = {
+  "smollm2-360m-q4": "✦",
+  "llama-3.2-1b-q4": "✦",
+  "llama-3.2-3b-q4": "✦",
+  "phi-3-mini-q4": "✦",
+  "gemma-2-2b-q4": "✦",
+  "mistral-7b-q4": "✦",
+  "whisper-tiny-en": "◌",
+  "whisper-small-en": "◌",
+  "moondream2-q4": "◎",
+  "maps-world-overview": "◎",
+  "maps-us-streets": "◎",
+  "library-seed": "☰",
+  "library-extended": "☰",
+  "gazetteer-geonames": "◎",
+};
+
 export function Packs() {
   const s = useCache();
   const mgr = useMemo(() => {
@@ -22,7 +39,7 @@ export function Packs() {
     ...ALL_MODELS.map((m) => ({
       id: m.id,
       title: m.name,
-      blurb: `${m.description} · ${m.diskMb} MB · ${m.license}`,
+      blurb: `${m.diskMb} MB · ${m.license}`,
       url: m.source.url,
       filename: m.filename,
       bytes: m.source.bytes,
@@ -32,7 +49,7 @@ export function Packs() {
     ...ALL_PACKS.map((p) => ({
       id: p.id,
       title: p.name,
-      blurb: `${p.description} · ${p.diskMb} MB · ${p.license}`,
+      blurb: `${p.diskMb} MB · ${p.license}`,
       url: p.source.url,
       filename: p.filename,
       bytes: p.source.bytes,
@@ -43,18 +60,15 @@ export function Packs() {
 
   return (
     <div className="stack">
-      <div>
+      <div className="page-head">
         <p className="kicker">Download once · run forever</p>
-        <h2>Models & data packs</h2>
-        <p>
-          The base app is small. Choose what to keep on this device. Bundled library, world map, and 34k places are already here.
-          Chat models are optional — without one, CACHE still answers from the library.
-        </p>
+        <h2>Packs</h2>
+        <p>Bundled library, world map, and 34k places are already here. Chat models are optional.</p>
       </div>
       {!s.settings.onboarded && (
         <div className="card onboard stack">
           <h3>First launch</h3>
-          <p>Recommended starter: keep the bundled library + map, optionally download SmolLM2 360M and whisper tiny.en when you have Wi-Fi and disk.</p>
+          <p>Keep the bundled library and map. Optionally download SmolLM2 360M and whisper tiny.en on Wi-Fi.</p>
           <div className="row">
             <button
               className="btn primary"
@@ -66,7 +80,7 @@ export function Packs() {
                 markOnboarded();
               }}
             >
-              Download starter + enter
+              Download starter
             </button>
             <button
               className="btn"
@@ -75,46 +89,42 @@ export function Packs() {
                 updateSettings({ airgapLocked: true });
               }}
             >
-              Skip models · lock air-gap
+              Skip · lock air-gap
             </button>
           </div>
         </div>
       )}
-      <div className="card">
+      <div className="card" style={{ padding: "8px 18px" }}>
         {items.map((it) => {
           const st = s.installs[it.id];
           const pct = st ? progressPct(st) : it.bundled ? 100 : 0;
+          const ready = it.bundled || st?.state === "ready";
           return (
-            <div key={it.id} className="list-item">
-              <div style={{ flex: 1 }}>
-                <strong>{it.title} {it.recommend ? "· recommended" : ""}</strong>
-                <div className="muted">{it.blurb}</div>
-                <div className="progress" style={{ marginTop: 8 }}><span style={{ width: `${pct}%` }} /></div>
-                <div className="mono">
-                  {it.bundled
-                    ? "Bundled · ready"
-                    : st
-                      ? `${st.state} · ${formatBytes(st.received)} / ${st.total ? formatBytes(st.total) : "?"}`
-                      : "Not downloaded"}
-                  {st?.error ? ` · ${st.error}` : ""}
+            <div key={it.id} className="app-row">
+              <div className="app-ico">{ICO[it.id] ?? "•"}</div>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <strong>{it.title}{it.recommend ? "  ·  recommended" : ""}</strong>
+                <div className="muted">
+                  {it.blurb}
+                  {st && !ready ? ` · ${st.state} ${formatBytes(st.received)}` : ready ? " · ready" : " · not downloaded"}
                 </div>
-              </div>
-              <div className="row">
-                {!it.bundled && (
-                  <button
-                    className="btn"
-                    onClick={() => void mgr.start(it.id, it.url, it.filename, it.bytes)}
-                  >
-                    {st?.state === "paused" ? "Resume" : "Download"}
-                  </button>
-                )}
-                {st?.state === "downloading" && (
-                  <button className="btn ghost" onClick={() => mgr.pause(it.id)}>Pause</button>
-                )}
-                {(st || it.bundled) && !it.bundled && (
-                  <button className="btn danger" onClick={() => void forgetPack(it.id)}>Delete</button>
+                {st && st.state === "downloading" && (
+                  <div className="progress" style={{ marginTop: 6 }}><span style={{ width: `${pct}%` }} /></div>
                 )}
               </div>
+              {ready && !it.bundled ? (
+                <button className="btn icon" title="Remove" onClick={() => void forgetPack(it.id)}>✓</button>
+              ) : it.bundled ? (
+                <span className="muted">✓</span>
+              ) : (
+                <button
+                  className="btn icon"
+                  title="Download"
+                  onClick={() => void mgr.start(it.id, it.url, it.filename, it.bytes)}
+                >
+                  +
+                </button>
+              )}
             </div>
           );
         })}

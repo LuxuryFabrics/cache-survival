@@ -130,8 +130,8 @@ export function MapView() {
   return (
     <div className="stack">
       <div className="row">
-        <div>
-          <p className="kicker">MapLibre · offline vectors</p>
+        <div className="page-head">
+          <p className="kicker">Offline vectors</p>
           <h2>Maps</h2>
         </div>
         <span className="spacer" />

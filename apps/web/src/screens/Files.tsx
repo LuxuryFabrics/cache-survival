@@ -32,10 +32,10 @@ export function Files() {
 
   return (
     <div className="stack">
-      <div>
+      <div className="page-head">
         <p className="kicker">Local RAG</p>
-        <h2>Your files</h2>
-        <p>Import PDFs and text. CACHE chunks them on-device so chat can cite your own manuals.</p>
+        <h2>Files</h2>
+        <p>Import PDFs and text. Chat can cite them on-device.</p>
       </div>
       <div className="card stack">
         <input

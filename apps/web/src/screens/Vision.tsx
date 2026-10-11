@@ -27,10 +27,10 @@ export function Vision() {
 
   return (
     <div className="stack">
-      <div>
-        <p className="kicker">Local catalog · hybrid ID</p>
-        <h2>Vision / Identify</h2>
-        <p>Photos never upload. Matching uses the on-device field catalog plus optional local OCR. Unknown = do not eat.</p>
+      <div className="page-head">
+        <p className="kicker">On-device catalog</p>
+        <h2>Vision</h2>
+        <p>Photos never upload. Unknown = do not eat.</p>
       </div>
       <div className="grid-2">
         <div className="card stack">

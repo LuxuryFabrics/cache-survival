@@ -24,8 +24,8 @@ export default defineConfig({
         name: "CACHE — Offline Survival AI",
         short_name: "CACHE",
         description: "Fully offline survival companion. No cloud after install.",
-        theme_color: "#0c0f0c",
-        background_color: "#0c0f0c",
+        theme_color: "#f4f4f2",
+        background_color: "#f4f4f2",
         display: "standalone",
         start_url: "/",
         icons: [
