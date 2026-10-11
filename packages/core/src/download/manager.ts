@@ -6,7 +6,12 @@ export interface DownloadAdapter {
   getReceived(id: string): Promise<number>;
   finalize(id: string, filename: string): Promise<string>;
   remove(id: string): Promise<void>;
-  fetchRange(url: string, start: number, onChunk: (chunk: Uint8Array, total?: number) => void, signal: AbortSignal): Promise<void>;
+  fetchRange(
+    url: string,
+    start: number,
+    onChunk: (chunk: Uint8Array, total?: number) => void | Promise<void>,
+    signal: AbortSignal,
+  ): Promise<void>;
 }
 
 type Listener = (status: InstallStatus) => void;
@@ -59,14 +64,14 @@ export class DownloadManager {
       await this.adapter.fetchRange(
         url,
         received0,
-        (chunk, total) => {
-          void this.adapter.writeChunk(id, chunk, (this.status.get(id)?.received ?? received0));
+        async (chunk, total) => {
           const prev = this.status.get(id);
-          const received = (prev?.received ?? received0) + chunk.length;
+          const offset = prev?.received ?? received0;
+          await this.adapter.writeChunk(id, chunk, offset);
           this.put({
             id,
             state: "downloading",
-            received,
+            received: offset + chunk.byteLength,
             total: total ?? prev?.total ?? expected ?? 0,
             updatedAt: Date.now(),
           });

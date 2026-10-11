@@ -28,7 +28,7 @@ export type LibraryCategory =
 
 export type PackKind = "model" | "whisper" | "vision" | "library" | "maps" | "gazetteer" | "field-id";
 
-export type Quantization = "Q4_K_M" | "Q4_0" | "Q5_K_M" | "Q5_0" | "Q8_0" | "IQ4_XS";
+export type Quantization = "Q4_K_M" | "Q4_0" | "Q5_K_M" | "Q5_0" | "Q8_0" | "IQ4_XS" | "F16";
 
 export interface DownloadSource {
   /** Primary URL (Hugging Face resolve or direct). */

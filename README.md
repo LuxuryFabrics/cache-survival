@@ -86,7 +86,7 @@ Configure in `packages/core/src/catalog/models.ts`. Defaults:
 
 | Role | Model | Quant | Notes |
 | --- | --- | --- | --- |
-| Fast | [SmolLM2 360M Instruct](https://huggingface.co/HuggingFaceTB/SmolLM2-360M-Instruct-GGUF) | Q4_K_M | Best first phone / WASM download |
+| Fast | [SmolLM2 360M Instruct](https://huggingface.co/lmstudio-community/SmolLM2-360M-Instruct-GGUF) | Q4_K_M | Best first phone / WASM download |
 | Fast | [Llama 3.2 1B Instruct](https://huggingface.co/bartowski/Llama-3.2-1B-Instruct-GGUF) | Q4_K_M | Stronger small model |
 | Balanced | [Llama 3.2 3B](https://huggingface.co/bartowski/Llama-3.2-3B-Instruct-GGUF) / [Phi-3 Mini](https://huggingface.co/microsoft/Phi-3-mini-4k-instruct-gguf) / [Gemma 2 2B](https://huggingface.co/bartowski/gemma-2-2b-it-GGUF) | Q4_K_M | Mid-range phones, native llama.cpp |
 | Heavy | [Mistral 7B Instruct v0.3](https://huggingface.co/bartowski/Mistral-7B-Instruct-v0.3-GGUF) | Q4_K_M | Desktop / flagship |
