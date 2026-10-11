@@ -1095,6 +1095,28 @@ def download_world(dest: Path) -> None:
         }))
 
 
+def download_lakes(dest: Path) -> None:
+    """Natural Earth 50m lakes — Great Lakes and other inland seas the 110m countries fill as land."""
+    url = "https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_50m_lakes.geojson"
+    print(f"Downloading {url}")
+    try:
+        with urllib.request.urlopen(url, timeout=60) as r:
+            geo = json.load(r)
+        slim = {"type": "FeatureCollection", "features": []}
+        for f in geo.get("features", []):
+            props = f.get("properties") or {}
+            slim["features"].append({
+                "type": "Feature",
+                "properties": {"name": props.get("name") or props.get("NAME") or ""},
+                "geometry": f.get("geometry"),
+            })
+        dest.write_text(json.dumps(slim, separators=(",", ":")))
+        print(f"Wrote {dest} ({dest.stat().st_size} bytes, {len(slim['features'])} lakes)")
+    except Exception as e:
+        print(f"Lakes download failed ({e}); writing empty collection")
+        dest.write_text(json.dumps({"type": "FeatureCollection", "features": []}))
+
+
 def main() -> None:
     docs = library()
     lib_path = OUT / "library-seed.json"
@@ -1106,6 +1128,7 @@ def main() -> None:
     print(f"Places: {len(places)}")
 
     download_world(OUT / "world-110m.geojson")
+    download_lakes(OUT / "lakes.geojson")
 
     meta = {
         "libraryCount": len(docs),

@@ -9,6 +9,7 @@ export const MAP_STYLE: StyleSpecification = {
   name: "CACHE offline",
   sources: {
     world: { type: "geojson", data: "/data/world-110m.geojson" },
+    lakes: { type: "geojson", data: "/data/lakes.geojson" },
     lands: { type: "geojson", data: "/data/public-lands.geojson" },
     ofm: {
       type: "vector",
@@ -56,6 +57,12 @@ export const MAP_STYLE: StyleSpecification = {
       source: "ofm",
       "source-layer": "park",
       paint: { "fill-color": "#b7c9a4", "fill-opacity": 0.28 },
+    },
+    {
+      id: "ne-lakes",
+      type: "fill",
+      source: "lakes",
+      paint: { "fill-color": "#b9d4de", "fill-outline-color": "#9bbfcd" },
     },
     {
       id: "public-fill",

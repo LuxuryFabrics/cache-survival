@@ -17,4 +17,16 @@ describe("bundled data", () => {
     expect(places.length).toBeGreaterThan(30_000);
     expect(searchPlaces(places, "denver")[0].name.toLowerCase()).toContain("denver");
   });
+
+  it("ships major lakes so Michigan and the Great Lakes read at overview zoom", () => {
+    const lakes = JSON.parse(readFileSync("public/data/lakes.geojson", "utf8")) as {
+      features: { properties?: { name?: string } }[];
+    };
+    const names = lakes.features.map((f) => (f.properties?.name ?? "").toLowerCase());
+    expect(names.some((n) => n.includes("michigan"))).toBe(true);
+    expect(names.some((n) => n.includes("superior"))).toBe(true);
+    expect(names.some((n) => n.includes("huron"))).toBe(true);
+    expect(names.some((n) => n.includes("erie"))).toBe(true);
+    expect(names.some((n) => n.includes("ontario"))).toBe(true);
+  });
 });

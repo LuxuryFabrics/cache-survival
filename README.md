@@ -35,7 +35,7 @@ The bundled library is a reliable core, not 10k PDFs. The pack format is how you
 | Desktop | Tauri 2 wrapping the same UI |
 | Mobile | Capacitor (same UI) or React Native + native llama.cpp |
 | Places | GeoNames cities15000 (CC-BY 4.0), 34k+ towns |
-| World land | Natural Earth 110m (public domain) |
+| World land | Natural Earth 110m countries + 50m lakes (public domain) |
 
 No closed APIs. No analytics SDK.
 
