@@ -132,7 +132,7 @@ async function loadJson<T>(url: string, fallback: T): Promise<T> {
 
 export async function boot(): Promise<void> {
   try {
-    const [settings, convos, saved, notes, files, installs, lib] = await Promise.all([
+    const [settings, convos, saved, notes, files, installs, seedLib, landsLib] = await Promise.all([
       kvGet<AppSettings>(KEYS.settings).catch(() => undefined),
       kvGet<Conversation[]>(KEYS.conversations).catch(() => undefined),
       kvGet<SavedPlace[]>(KEYS.places).catch(() => undefined),
@@ -140,7 +140,9 @@ export async function boot(): Promise<void> {
       kvGet<UserFile[]>(KEYS.files).catch(() => undefined),
       kvGet<Record<string, InstallStatus>>(KEYS.installs).catch(() => undefined),
       loadJson<LibraryDocument[]>("/data/library-seed.json", []),
+      loadJson<LibraryDocument[]>("/data/library-lands.json", []),
     ]);
+    const lib = [...seedLib, ...landsLib];
 
     const nextSettings = { ...defaultSettings(), ...settings };
     if (nextSettings.airgapLocked) airgap.lock();

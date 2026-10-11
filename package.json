@@ -13,7 +13,7 @@
     "build": "npm run build -w @cache/web",
     "test": "npm run test -w @cache/core && npm run test -w @cache/web",
     "typecheck": "npm run typecheck -w @cache/core && npm run typecheck -w @cache/web",
-    "data": "python3 scripts/build_data.py",
+    "data": "python3 scripts/build_data.py && python3 scripts/build_public_lands.py",
     "preview": "npm run preview -w @cache/web"
   },
   "engines": {

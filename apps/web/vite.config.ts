@@ -8,9 +8,9 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: "autoUpdate",
-      includeAssets: ["data/**/*", "fonts/**/*", "icons/**/*"],
+      includeAssets: ["data/library-seed.json", "data/manifest.json", "data/world-110m.geojson", "data/places.json", "icons/**/*"],
       workbox: {
-        globPatterns: ["**/*.{js,css,html,svg,json,geojson,woff2,wasm}"],
+        globPatterns: ["**/*.{js,css,html,svg,woff2,wasm}"],
         maximumFileSizeToCacheInBytes: 12 * 1024 * 1024,
         navigateFallback: "/index.html",
         runtimeCaching: [

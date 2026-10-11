@@ -10,6 +10,7 @@ export * from "./rag/retrieve.js";
 export * from "./notes/crypto.js";
 export * from "./chat/store.js";
 export * from "./places/search.js";
+export * from "./places/lands.js";
 export * from "./vision/pipeline.js";
 export * from "./vision/field-id.js";
 export * from "./files/ingest.js";

@@ -1,10 +1,14 @@
 import {
   bearingDegrees,
   compassLabel,
+  describeLand,
   formatDistance,
   haversineKm,
+  LAND_KIND_LABEL,
+  landFromProperties,
   newId,
   searchPlaces,
+  type LandHit,
   type Place,
 } from "@cache/core";
 import maplibregl from "maplibre-gl";
@@ -17,20 +21,52 @@ const STYLE: maplibregl.StyleSpecification = {
   name: "CACHE offline",
   sources: {
     world: { type: "geojson", data: "/data/world-110m.geojson" },
+    lands: { type: "geojson", data: "/data/public-lands.geojson" },
   },
   layers: [
-    { id: "bg", type: "background", paint: { "background-color": "#0d1418" } },
+    { id: "bg", type: "background", paint: { "background-color": "#e4ecee" } },
     {
       id: "land",
       type: "fill",
       source: "world",
-      paint: { "fill-color": "#1b2620", "fill-outline-color": "#3d4a38" },
+      paint: { "fill-color": "#efece3", "fill-outline-color": "#d5d1c6" },
     },
     {
       id: "borders",
       type: "line",
       source: "world",
-      paint: { "line-color": "#6b735f", "line-width": 0.6 },
+      paint: { "line-color": "#c8c4b8", "line-width": 0.6 },
+    },
+    {
+      id: "public-fill",
+      type: "fill",
+      source: "lands",
+      paint: {
+        "fill-color": [
+          "match",
+          ["get", "kind"],
+          "blm",
+          "#e6c36a",
+          "usfs",
+          "#6ea36a",
+          "nps",
+          "#2f6b4f",
+          "fws",
+          "#4aa3a0",
+          "dod",
+          "#8a8a7a",
+          "bor",
+          "#7a9bb8",
+          "#8aa37a",
+        ],
+        "fill-opacity": 0.48,
+      },
+    },
+    {
+      id: "public-line",
+      type: "line",
+      source: "lands",
+      paint: { "line-color": "#5c584c", "line-width": 0.4, "line-opacity": 0.35 },
     },
   ],
 };
@@ -49,6 +85,9 @@ export function MapView() {
   const [measure, setMeasure] = useState<{ lat: number; lon: number } | null>(null);
   const [info, setInfo] = useState("");
   const [mapError, setMapError] = useState("");
+  const [showLands, setShowLands] = useState(true);
+  const [tenure, setTenure] = useState<LandHit | null>(null);
+  const [probed, setProbed] = useState(false);
 
   useEffect(() => {
     if (!ref.current || mapRef.current) return;
@@ -78,7 +117,11 @@ export function MapView() {
     map.on("click", (e) => {
       const lat = e.lngLat.lat;
       const lon = e.lngLat.lng;
-      setFix({ lat, lon, label: "Map pin" });
+      const hits = map.queryRenderedFeatures(e.point, { layers: ["public-fill"] });
+      const land = landFromProperties(hits[0]?.properties as Record<string, unknown> | undefined);
+      setTenure(land);
+      setProbed(true);
+      setFix({ lat, lon, label: land ? land.name : "Map pin" });
       updateSettings({ lastKnown: { lat, lon, at: Date.now(), source: "map" } });
       if (measure) {
         const km = haversineKm(measure, { lat, lon });
@@ -86,9 +129,9 @@ export function MapView() {
           `${formatDistance(km, s.settings.units)} · ${compassLabel(bearingDegrees(measure, { lat, lon }))} (${bearingDegrees(measure, { lat, lon }).toFixed(0)}°)`,
         );
       } else {
-        setInfo(`${lat.toFixed(4)}, ${lon.toFixed(4)}`);
+        setInfo(describeLand(land));
       }
-      new maplibregl.Marker({ color: "#e3a31a" }).setLngLat([lon, lat]).addTo(map);
+      new maplibregl.Marker({ color: "#171717" }).setLngLat([lon, lat]).addTo(map);
     });
     map.on("contextmenu", (e) => {
       e.preventDefault();
@@ -103,6 +146,14 @@ export function MapView() {
       mapRef.current = null;
     };
   }, []);
+
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map?.getLayer("public-fill")) return;
+    const vis = showLands ? "visible" : "none";
+    map.setLayoutProperty("public-fill", "visibility", vis);
+    map.setLayoutProperty("public-line", "visibility", vis);
+  }, [showLands]);
 
   function fly(lat: number, lon: number, label: string) {
     setFix({ lat, lon, label });
@@ -155,8 +206,21 @@ export function MapView() {
           <button className="btn" onClick={() => setMeasure(fix ? { lat: fix.lat, lon: fix.lon } : null)}>
             Measure from pin
           </button>
+          <button className={`chip ${showLands ? "on" : ""}`} onClick={() => setShowLands((v) => !v)}>
+            Public land
+          </button>
         </div>
-        <div ref={ref} style={{ height: "100%", background: "#0d1418" }} />
+        <div ref={ref} style={{ height: "100%", background: "#e4ecee" }} />
+        {showLands && (
+          <div className="land-legend">
+            <div><i className="swatch priv" /> Private / unmapped</div>
+            <div><i className="swatch blm" /> BLM</div>
+            <div><i className="swatch usfs" /> Forest Service</div>
+            <div><i className="swatch nps" /> Park Service</div>
+            <div><i className="swatch fws" /> Fish & Wildlife</div>
+            <div><i className="swatch dod" /> Defense</div>
+          </div>
+        )}
         {mapError && (
           <div className="card" style={{ position: "absolute", inset: 56, zIndex: 1 }}>
             <h3>Map canvas offline</h3>
@@ -190,6 +254,14 @@ export function MapView() {
                 <strong>{fix.label}</strong>
                 <div className="mono">{fix.lat.toFixed(4)}, {fix.lon.toFixed(4)}</div>
                 {info && <div className="muted">{info}</div>}
+                {probed && tenure && (
+                  <div className="badge" style={{ marginTop: 8 }}>
+                    Public · {LAND_KIND_LABEL[tenure.kind]}
+                  </div>
+                )}
+                {probed && !tenure && (
+                  <div className="badge quiet" style={{ marginTop: 8 }}>Private or unmapped</div>
+                )}
               </div>
               <span className="spacer" />
               <button
@@ -205,7 +277,7 @@ export function MapView() {
                 onClick={() => {
                   setScreen("chat");
                   void sendPrompt(
-                    `What are the field considerations for this location? Terrain, climate, water, and common hazards.`,
+                    `What are the field considerations for this location? Terrain, climate, water, and common hazards. Land tenure from the offline map: ${describeLand(tenure)}.`,
                     { location: { lat: fix.lat, lon: fix.lon, label: fix.label }, expertMode: "navigation" },
                   );
                 }}

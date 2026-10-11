@@ -231,6 +231,19 @@ export const MAP_PACKS: DataPackSpec[] = [
     diskMb: 12000,
     region: "US",
   },
+  {
+    id: "maps-us-public-lands",
+    name: "US public lands (bundled, simplified)",
+    kind: "maps",
+    description:
+      "Offline federal public-land polygons (BLM, USFS, NPS, FWS, DOD, Reclamation) plus Natural Earth parks. Units under ~50 km² omitted. Uncolored land is private or unmapped — not a parcel survey. Detailed PAD-US state extracts can replace this file.",
+    license: "US Government public domain + Natural Earth PD",
+    recommended: true,
+    filename: "public-lands.geojson",
+    source: { url: "app://bundled/public-lands.geojson", bytes: 6_600_000 },
+    diskMb: 7,
+    region: "US",
+  },
 ];
 
 export const LIBRARY_PACKS: DataPackSpec[] = [

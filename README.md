@@ -128,6 +128,10 @@ The base map is a world overview (enough to navigate continents and find 34k tow
 
 Drop a region file into the pack manager (US streets is catalogued). Do not bake a planetary street tileset into the base APK.
 
+### Public vs private land
+
+The map paints simplified **U.S. federal public land** (BLM, Forest Service, NPS, FWS, DOD, Reclamation). Cream / uncolored land is **private or unmapped** — not a parcel survey. State, tribal, and local units are often missing. Details and PAD-US download links: [docs/LANDS.md](docs/LANDS.md).
+
 ## Library packs
 
 Seed documents are in `apps/web/public/data/library-seed.json` (generated from `scripts/build_data.py`).

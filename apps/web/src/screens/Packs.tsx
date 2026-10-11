@@ -22,6 +22,7 @@ const ICO: Record<string, string> = {
   "moondream2-q4": "◎",
   "maps-world-overview": "◎",
   "maps-us-streets": "◎",
+  "maps-us-public-lands": "▣",
   "library-seed": "☰",
   "library-extended": "☰",
   "gazetteer-geonames": "◎",

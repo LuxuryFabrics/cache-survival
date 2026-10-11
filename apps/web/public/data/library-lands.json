@@ -1,0 +1,12 @@
+[
+  {
+    "id": "legal-public-private-land",
+    "title": "Public vs private land on the offline map",
+    "category": "legal",
+    "source": "CACHE notes on PAD-US / federal surface management. Not legal advice.",
+    "license": "CC0",
+    "tags": ["public land", "private land", "blm", "usfs", "trespass", "pad-us"],
+    "body": "CACHE paints simplified U.S. federal public land on the offline map: Bureau of Land Management, Forest Service, National Park Service, Fish and Wildlife Service, Department of Defense, and Bureau of Reclamation, plus Natural Earth park units.\n\nUncolored land is labeled private or unmapped. That is not a parcel survey. State parks, state trust land, county open space, tribal land, conservation easements, and small federal scraps under about 50 km² are often missing. A ranch, inholding, or closed military range can sit next to a green forest polygon.\n\nPublic does not mean you may camp, hunt, drive, or cut wood. Many federal units are open to walk-in travel; others need a permit, are seasonal, or are closed. Private land generally requires permission. This app cannot see posted signs, leases, or fire closures.\n\nThe authoritative national inventory is USGS PAD-US (public domain). For a hunt unit or a build site, use the current agency map or a licensed cadastral product. If this layer and a ranger or landowner disagree, they win.",
+    "updatedAt": "2026-01-01"
+  }
+]
