@@ -8,7 +8,7 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: "autoUpdate",
-      includeAssets: ["data/library-seed.json", "data/manifest.json", "data/world-110m.geojson", "data/lakes.geojson", "data/places.json", "icons/**/*"],
+      includeAssets: ["data/library-seed.json", "data/manifest.json", "data/world-110m.geojson", "data/lakes.geojson", "data/places.json", "icons/**/*", "fonts/**/*.pbf"],
       workbox: {
         globPatterns: ["**/*.{js,css,html,svg,woff2,wasm}"],
         maximumFileSizeToCacheInBytes: 12 * 1024 * 1024,

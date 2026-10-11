@@ -2,15 +2,20 @@ import { describe, expect, it } from "vitest";
 import {
   bboxAround,
   countTilesForBbox,
+  demKey,
+  demRemoteUrl,
   DETAIL_MAX_Z,
   lonToTileX,
   latToTileY,
+  parseDemPath,
   parseTileUrl,
   planSave,
   remoteTileUrl,
   TILE_CAP,
+  tileKey,
   tilesForBbox,
   tilesForRegion,
+  withHalo,
 } from "../src/lib/tiles";
 
 describe("tile math", () => {
@@ -39,6 +44,23 @@ describe("tile math", () => {
     expect(remoteTileUrl({ z: 12, x: 853, y: 1554 })).toBe(
       "https://tiles.openfreemap.org/planet/latest/12/853/1554.pbf",
     );
+  });
+
+  it("keeps street keys unprefixed and namespaces elevation tiles", () => {
+    const denver = { z: 12, x: 853, y: 1554 };
+    expect(tileKey(denver)).toBe("12/853/1554");
+    expect(demKey(denver)).toBe("dem/12/853/1554");
+    expect(demRemoteUrl(denver)).toBe(
+      "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/12/853/1554.png",
+    );
+    expect(parseDemPath("/cache-dem/12/853/1554.png")).toEqual(denver);
+    expect(parseDemPath("http://127.0.0.1:5173/cache-dem/8/67/97.png")).toEqual({ z: 8, x: 67, y: 97 });
+    expect(parseDemPath("https://tiles.openfreemap.org/planet/latest/12/1/2.pbf")).toBeNull();
+  });
+
+  it("pads elevation tiles by one so contours meet at the edge", () => {
+    expect(withHalo([{ z: 10, x: 5, y: 5 }], 1)).toHaveLength(9);
+    expect(withHalo([{ z: 2, x: 0, y: 0 }], 1)).toHaveLength(6);
   });
 
   it("lists a small city bbox at street zoom", () => {

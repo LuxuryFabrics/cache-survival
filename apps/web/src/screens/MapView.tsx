@@ -15,7 +15,7 @@ import maplibregl from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { useEffect, useRef, useState } from "react";
 import { consumeMapFocus, deletePlace, savePlace, sendPrompt, setScreen, updateSettings, useCache } from "../hooks";
-import { isTileMapError, MAP_STYLE } from "../lib/map-style";
+import { buildMapStyle, contourLabelField, isTileMapError } from "../lib/map-style";
 import {
   ensureTileProtocol,
   planSave,
@@ -63,7 +63,7 @@ export function MapView() {
       ensureTileProtocol();
       map = new maplibregl.Map({
         container: ref.current,
-        style: MAP_STYLE,
+        style: buildMapStyle(s.settings.units),
         center: [fix?.lon ?? -104.99, fix?.lat ?? 39.74],
         zoom: 2.2,
         minZoom: 1,
@@ -176,6 +176,9 @@ export function MapView() {
 
   useEffect(() => {
     scaleRef.current?.setUnit(s.settings.units === "mi" ? "imperial" : "metric");
+    const map = mapRef.current;
+    if (!map?.getLayer("contour-label")) return;
+    map.setLayoutProperty("contour-label", "text-field", contourLabelField(s.settings.units));
   }, [s.settings.units]);
 
   useEffect(() => {
@@ -278,19 +281,19 @@ export function MapView() {
   }
 
   const zoomHint =
-    zoom < 7
-      ? "Overview — zoom in for streets and water"
+    zoom < 6
+      ? "Overview — shaded relief. Zoom for contours"
       : zoom < 11
-        ? "Highways and rivers — keep zooming for streets"
+        ? "Terrain — zoom for contour lines and trails"
         : zoom < 13
-          ? "Street detail"
-          : "Buildings and alleys";
+          ? "Contours, roads, and water"
+          : "Contours and buildings";
 
   return (
     <div className="stack">
       <div className="row map-page-head">
         <div className="page-head">
-          <p className="kicker">Offline vectors</p>
+          <p className="kicker">Topographic</p>
           <h2>Maps</h2>
         </div>
         <span className="spacer" />
@@ -347,22 +350,22 @@ export function MapView() {
           )}
           {saving && (
             <div className="map-progress-card card">
-              <strong>Saving street tiles</strong>
+              <strong>Saving this view</strong>
               <div className="progress" style={{ marginTop: 8 }}>
                 <span style={{ width: `${saving.total ? (100 * saving.done) / saving.total : 0}%` }} />
               </div>
-              <p className="muted">{saving.done} / {saving.total} · OpenFreeMap / OSM</p>
+              <p className="muted">{saving.done} / {saving.total} · terrain, streets, OSM</p>
             </div>
           )}
           {mapError && (
             <div className="card" style={{ position: "absolute", inset: 56, zIndex: 1 }}>
               <h3>Map canvas offline</h3>
               <p>{mapError}</p>
-              <p className="muted">Use town search and saved places. Street tiles still apply on devices with WebGL.</p>
+              <p className="muted">Use town search and saved places. Cached topo tiles still draw on devices with WebGL.</p>
             </div>
           )}
         </div>
-        <p className="map-credit">© OpenFreeMap · OpenMapTiles · OpenStreetMap</p>
+        <p className="map-credit">© OpenFreeMap · OpenMapTiles · OpenStreetMap · Terrain: Mapzen / AWS</p>
         <div className="map-popup card stack">
           {narrow && s.savedPlaces.length > 0 && hits.length === 0 && (
             <div className="map-pins">

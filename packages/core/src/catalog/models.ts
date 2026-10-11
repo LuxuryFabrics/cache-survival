@@ -207,7 +207,7 @@ export const MAP_PACKS: DataPackSpec[] = [
     id: "maps-world-overview",
     name: "World overview (bundled)",
     kind: "maps",
-    description: "Low-zoom world land polygons, borders, and major lakes (Great Lakes, Caspian, etc.). Ships with the app. Zoom in for OpenFreeMap streets.",
+    description: "Low-zoom world land polygons, borders, and major lakes (Great Lakes, Caspian, etc.). Ships with the app. Zoom in for shaded relief, contours, and OpenFreeMap streets.",
     license: "Natural Earth / public domain",
     recommended: true,
     filename: "world-110m.geojson",
@@ -217,16 +217,20 @@ export const MAP_PACKS: DataPackSpec[] = [
   },
   {
     id: "maps-us-streets",
-    name: "Street & water detail (OpenFreeMap)",
+    name: "Topo, streets & water",
     kind: "maps",
     description:
-      "OpenStreetMap vector tiles via OpenFreeMap (OpenMapTiles, z0–14). The map fetches streets, water, and buildings as you zoom. Use Save this view to keep the current area in IndexedDB for air-gap use. Cache only the regions you need — do not bake a planetary tileset into the app.",
-    license: "ODbL (OpenStreetMap) via OpenFreeMap / OpenMapTiles",
+      "Default map is topographic: shaded relief and contours from Mapzen/AWS terrain tiles, plus OpenStreetMap streets, water, and buildings via OpenFreeMap (z0–14). Tiles cache in IndexedDB as you pan. Save this view keeps that area, including elevation, for air-gap use. Cache only the regions you need — do not bake a planetary tileset into the app.",
+    license: "ODbL via OpenFreeMap; terrain © Mapzen / AWS Open Data",
     recommended: true,
     filename: "ofm-tiles-idb",
     source: {
       url: "app://bundled/ofm-cache",
-      mirrors: ["https://tiles.openfreemap.org/planet/latest/{z}/{x}/{y}.pbf", "https://openfreemap.org/"],
+      mirrors: [
+        "https://tiles.openfreemap.org/planet/latest/{z}/{x}/{y}.pbf",
+        "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png",
+        "https://openfreemap.org/",
+      ],
       bytes: 0,
     },
     diskMb: 80,

@@ -5,6 +5,17 @@ import { tileGet, tileSet, tileStats } from "./idb";
 /** Stable OpenFreeMap planet alias (OpenMapTiles schema, maxzoom 14). */
 export const OFM_TILE_TEMPLATE = "https://tiles.openfreemap.org/planet/latest/{z}/{x}/{y}.pbf";
 export const OFM_PROTOCOL = "ofm";
+/**
+ * Mapzen terrarium elevation on AWS Open Data (SRTM, USGS 3DEP, GMTED2010).
+ * Zoom 0–15. Cached on demand; not bundled.
+ */
+export const DEM_TILE_TEMPLATE = "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png";
+/**
+ * Same-origin path. Air-gap treats it as local. `installDemFetch` serves IndexedDB
+ * or the terrarium URL, so contour generation and hillshade share one cache.
+ */
+export const DEM_LOCAL_TEMPLATE = "/cache-dem/{z}/{x}/{y}.png";
+export const DEM_MAX_Z = 14;
 export const TILE_CAP = 4000;
 export const DETAIL_MIN_Z = 8;
 export const DETAIL_MAX_Z = 14;
@@ -17,8 +28,59 @@ export type SavePlan =
   | { ok: true; minZ: number; maxZ: number; count: number }
   | { ok: false; reason: string };
 
+/** Unprefixed so street tiles saved before elevation support still hit. */
 export function tileKey(t: TileCoord): string {
   return `${t.z}/${t.x}/${t.y}`;
+}
+
+/** Namespaced so a DEM PNG never overwrites the vector tile at the same z/x/y. */
+export function demKey(t: TileCoord): string {
+  return `dem/${t.z}/${t.x}/${t.y}`;
+}
+
+export function demRemoteUrl(t: TileCoord): string {
+  return DEM_TILE_TEMPLATE.replace("{z}", String(t.z)).replace("{x}", String(t.x)).replace("{y}", String(t.y));
+}
+
+export function parseDemPath(url: string): TileCoord | null {
+  const m = url.match(/\/cache-dem\/(\d+)\/(\d+)\/(\d+)\.png(?:\?.*)?$/);
+  if (!m) return null;
+  const z = Number(m[1]);
+  const x = Number(m[2]);
+  const y = Number(m[3]);
+  if (z > 22) return null;
+  const n = 2 ** z;
+  if (x >= n || y >= n) return null;
+  return { z, x, y };
+}
+
+/** Include neighboring tiles so contour lines join across the edge of a saved view. */
+export function withHalo(tiles: TileCoord[], pad = 1): TileCoord[] {
+  const seen = new Set<string>();
+  const out: TileCoord[] = [];
+  for (const t of tiles) {
+    const n = 2 ** t.z;
+    for (let dx = -pad; dx <= pad; dx++) {
+      for (let dy = -pad; dy <= pad; dy++) {
+        const x = ((t.x + dx) % n + n) % n;
+        const y = t.y + dy;
+        if (y < 0 || y >= n) continue;
+        const key = `${t.z}/${x}/${y}`;
+        if (seen.has(key)) continue;
+        seen.add(key);
+        out.push({ z: t.z, x, y });
+      }
+    }
+  }
+  return out;
+}
+
+export function tilesForSave(bbox: BBox, minZ: number, maxZ: number): { vector: TileCoord[]; dem: TileCoord[] } {
+  const vector: TileCoord[] = [];
+  for (let z = maxZ; z >= minZ; z--) vector.push(...tilesForBbox(bbox, z));
+  const low: TileCoord[] = [];
+  for (let z = 0; z < minZ; z++) low.push(...tilesForBbox(bbox, z));
+  return { vector, dem: withHalo([...low, ...vector], 1) };
 }
 
 export function parseTileUrl(url: string): TileCoord | null {
@@ -94,12 +156,12 @@ export function tilesForRegion(bbox: BBox, minZ: number, maxZ: number, cap = TIL
   return out;
 }
 
-/** Prefer street-level tiles for the visible box; refuse continent-scale saves. */
+/** Prefer detail tiles for the visible box; refuse continent-scale saves. */
 export function planSave(bbox: BBox, viewZoom: number, cap = TILE_CAP): SavePlan {
   if (countTilesForBbox(bbox, DETAIL_MAX_Z) > cap) {
     return {
       ok: false,
-      reason: "Zoom in to a town or valley, then Save this view. This frame is too wide for street tiles.",
+      reason: "Zoom in to a town or valley, then Save this view. This frame is too wide to store.",
     };
   }
   const maxZ = DETAIL_MAX_Z;
@@ -110,7 +172,8 @@ export function planSave(bbox: BBox, viewZoom: number, cap = TILE_CAP): SavePlan
     return t;
   };
   while (minZ < maxZ && totalFrom(minZ) > cap) minZ += 1;
-  return { ok: true, minZ, maxZ, count: totalFrom(minZ) };
+  const saved = tilesForSave(bbox, minZ, maxZ);
+  return { ok: true, minZ, maxZ, count: saved.vector.length + saved.dem.length };
 }
 
 export function bboxAround(lat: number, lon: number, km = 8): BBox {
@@ -143,9 +206,50 @@ export async function loadTile(t: TileCoord, signal?: AbortSignal): Promise<Arra
   return data;
 }
 
+export async function loadDemTile(t: TileCoord, signal?: AbortSignal): Promise<ArrayBuffer> {
+  installDemFetch();
+  const key = demKey(t);
+  const cached = await tileGet(key);
+  if (cached) return cached.slice(0);
+  if (airgap.getState().locked) throw new Error("AIRGAP: tile cache miss");
+  const res = await remoteFetch(demRemoteUrl(t), { signal });
+  if (!res.ok) throw new Error(`tile ${res.status}`);
+  const data = await res.arrayBuffer();
+  try {
+    await tileSet(key, data.slice(0));
+  } catch {
+    /* quota — still return the tile this session */
+  }
+  return data.slice(0);
+}
+
 let protocolInstalled = false;
+let demFetchInstalled = false;
+/** Fetch captured before the DEM hook, so elevation downloads do not re-enter it. */
+let remoteFetch: typeof fetch = globalThis.fetch.bind(globalThis);
+
+function requestUrl(input: RequestInfo | URL): string {
+  if (typeof input === "string") return input;
+  if (input instanceof URL) return input.toString();
+  return input.url;
+}
+
+export function installDemFetch(): void {
+  if (demFetchInstalled) return;
+  demFetchInstalled = true;
+  remoteFetch = globalThis.fetch.bind(globalThis);
+  globalThis.fetch = async (input: RequestInfo | URL, init?: RequestInit) => {
+    const url = requestUrl(input);
+    if (!url.includes("/cache-dem/")) return remoteFetch(input, init);
+    const coord = parseDemPath(url);
+    if (!coord) return new Response("bad dem url", { status: 404 });
+    const data = await loadDemTile(coord, init?.signal ?? undefined);
+    return new Response(data, { status: 200, headers: { "Content-Type": "image/png" } });
+  };
+}
 
 export function ensureTileProtocol(): void {
+  installDemFetch();
   if (protocolInstalled) return;
   protocolInstalled = true;
   maplibregl.addProtocol(OFM_PROTOCOL, async (params, abort) => {
@@ -167,25 +271,30 @@ export async function saveRegion(
 ): Promise<{ saved: number; cached: number; failed: number; total: number }> {
   const minZ = opts.minZ ?? DETAIL_MIN_Z;
   const maxZ = opts.maxZ ?? DETAIL_MAX_Z;
-  const tiles = tilesForRegion(bbox, minZ, maxZ);
+  const { vector, dem } = tilesForSave(bbox, minZ, maxZ);
+  const jobs: Array<{ kind: "ofm" | "dem"; t: TileCoord }> = [
+    ...vector.map((t) => ({ kind: "ofm" as const, t })),
+    ...dem.map((t) => ({ kind: "dem" as const, t })),
+  ];
   let saved = 0;
   let cached = 0;
   let failed = 0;
-  const total = tiles.length;
+  const total = jobs.length;
   let i = 0;
   const concurrency = 6;
 
   async function worker() {
-    while (i < tiles.length) {
+    while (i < jobs.length) {
       if (opts.signal?.aborted) return;
-      const t = tiles[i++];
+      const job = jobs[i++];
+      if (!job) return;
       try {
-        const existing = await tileGet(tileKey(t));
+        const key = job.kind === "dem" ? demKey(job.t) : tileKey(job.t);
+        const existing = await tileGet(key);
         if (existing) cached += 1;
-        else {
-          await loadTile(t, opts.signal);
-          saved += 1;
-        }
+        else if (job.kind === "dem") await loadDemTile(job.t, opts.signal);
+        else await loadTile(job.t, opts.signal);
+        if (!existing) saved += 1;
       } catch {
         failed += 1;
       }
