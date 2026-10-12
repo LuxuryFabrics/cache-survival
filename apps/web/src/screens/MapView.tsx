@@ -170,10 +170,18 @@ export function MapView() {
 
   useEffect(() => {
     const map = mapRef.current;
-    if (!map?.getLayer("public-fill")) return;
-    const vis = showLands ? "visible" : "none";
-    map.setLayoutProperty("public-fill", "visibility", vis);
-    map.setLayoutProperty("public-line", "visibility", vis);
+    if (!map) return;
+    const apply = () => {
+      if (!map.getLayer("public-fill")) return;
+      const vis = showLands ? "visible" : "none";
+      map.setLayoutProperty("public-fill", "visibility", vis);
+      if (map.getLayer("public-line")) map.setLayoutProperty("public-line", "visibility", vis);
+    };
+    apply();
+    map.on("load", apply);
+    return () => {
+      map.off("load", apply);
+    };
   }, [showLands]);
 
   useEffect(() => {
@@ -183,8 +191,12 @@ export function MapView() {
       if (!map.getLayer("satellite")) return;
       map.setLayoutProperty("satellite", "visibility", showSat ? "visible" : "none");
     };
-    if (map.isStyleLoaded()) apply();
-    else map.once("load", apply);
+    // isStyleLoaded stays false while terrain tiles are in flight, so wait on that and the toggle never lands.
+    apply();
+    map.on("load", apply);
+    return () => {
+      map.off("load", apply);
+    };
   }, [showSat]);
 
   useEffect(() => () => saveAbort.current?.abort(), []);
@@ -194,6 +206,21 @@ export function MapView() {
     const hit = stateAt(fix.lat, fix.lon);
     if (hit) setSatId(hit.id);
   }, [fix, satTouched]);
+
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || satTouched) return;
+    const sync = () => {
+      const center = map.getCenter();
+      const hit = stateAt(center.lat, center.lng);
+      if (hit) setSatId((prev) => (prev === hit.id ? prev : hit.id));
+    };
+    sync();
+    map.on("moveend", sync);
+    return () => {
+      map.off("moveend", sync);
+    };
+  }, [satTouched]);
 
   useEffect(() => {
     const mq = window.matchMedia("(max-width: 860px)");
