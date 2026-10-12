@@ -282,12 +282,12 @@ export function MapView() {
 
   const zoomHint =
     zoom < 6
-      ? "Overview — shaded relief. Zoom for contours"
-      : zoom < 11
-        ? "Terrain — zoom for contour lines and trails"
+      ? "Overview — relief, cities, and water"
+      : zoom < 10
+        ? "Towns and water — zoom for street names"
         : zoom < 13
-          ? "Contours, roads, and water"
-          : "Contours and buildings";
+          ? "Main streets, water, and contours"
+          : "Street names and buildings";
 
   return (
     <div className="stack">

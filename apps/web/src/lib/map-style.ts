@@ -5,6 +5,14 @@ import { DEM_LOCAL_TEMPLATE, DEM_MAX_Z, installDemFetch, OFM_PROTOCOL } from "./
 
 const MAJOR = ["motorway", "trunk", "primary"] as const;
 const MID = ["secondary", "tertiary"] as const;
+const LABEL = "Noto Sans Regular";
+const LABEL_ITALIC = "Noto Sans Italic";
+const HALO = "#f4f1e8";
+const NAME: ExpressionSpecification = ["coalesce", ["get", "name_en"], ["get", "name"]];
+const ROAD_NAME: ExpressionSpecification = ["coalesce", ["get", "name_en"], ["get", "name"], ["get", "ref"]];
+const HAS_NAME: ExpressionSpecification = ["any", ["has", "name_en"], ["has", "name"]];
+const LINE: ExpressionSpecification = ["match", ["geometry-type"], ["LineString", "MultiLineString"], true, false];
+const POINT: ExpressionSpecification = ["match", ["geometry-type"], ["Point", "MultiPoint"], true, false];
 
 const CONTOUR_THRESHOLDS: { [zoom: number]: [number, number] } = {
   10: [200, 1000],
@@ -40,7 +48,7 @@ export function contourLabelField(units: "mi" | "km"): ExpressionSpecification {
   return ["concat", ["to-string", ["round", ["get", "ele"]]], " m"];
 }
 
-/** Shaded relief and meter-interval contours, with streets and public land on top. */
+/** Shaded relief, contours, and labels for cities, streets, and water. */
 export function buildMapStyle(units: "mi" | "km"): StyleSpecification {
   const dem = ensureTopo();
   return {
@@ -242,28 +250,6 @@ export function buildMapStyle(units: "mi" | "km"): StyleSpecification {
         layout: { "line-join": "round", "line-cap": "round" },
       },
       {
-        id: "contour-label",
-        type: "symbol",
-        source: "contours",
-        "source-layer": "contours",
-        minzoom: 12,
-        filter: [">", ["get", "level"], 0],
-        paint: {
-          "text-color": "#5c3d28",
-          "text-halo-color": "#f4f1e8",
-          "text-halo-width": 1.4,
-        },
-        layout: {
-          "symbol-placement": "line",
-          "symbol-spacing": 180,
-          "text-size": 12,
-          "text-font": ["Noto Sans Regular"],
-          "text-field": contourLabelField(units),
-          "text-padding": 2,
-          "text-max-angle": 80,
-        },
-      },
-      {
         id: "ofm-rail",
         type: "line",
         source: "ofm",
@@ -361,7 +347,168 @@ export function buildMapStyle(units: "mi" | "km"): StyleSpecification {
           "fill-opacity": 0.88,
         },
       },
+      placeLabel("place-capital", 2, ["all", ["==", ["get", "class"], "city"], ["==", ["get", "capital"], 2], HAS_NAME], [2, 13, 5, 16, 8, 20, 12, 22], "#1a1612", 8),
+      placeLabel("place-city", 2, ["all", ["==", ["get", "class"], "city"], ["!=", ["get", "capital"], 2], HAS_NAME], [2, 12, 5, 14, 8, 17, 12, 20], "#1e1a16", 8),
+      placeLabel("place-town", 6, ["all", ["==", ["get", "class"], "town"], HAS_NAME], [6, 12, 10, 14, 14, 16], "#2a241c", 4),
+      placeLabel("place-village", 9, ["all", ["==", ["get", "class"], "village"], HAS_NAME], [9, 12, 14, 13], "#3d362c", 2),
+      placeLabel("place-hamlet", 12, ["all", ["==", ["get", "class"], "hamlet"], HAS_NAME], [12, 12, 16, 13], "#4a4338", 1),
+      roadLabel("road-major", 10, ["motorway", "trunk", "primary"], true, [10, 12, 14, 14], 280),
+      roadLabel("road-mid", 12, ["secondary", "tertiary"], true, [12, 12, 16, 13], 240),
+      roadLabel("road-minor", 13, ["minor", "service", "track"], false, [13, 12, 16, 13], 180),
+      roadLabel("road-path", 15, ["path"], false, [15, 11, 16, 12], 320),
+      waterLabel("water-point", "water_name", 2, ["all", POINT, HAS_NAME], false, [2, 12, 6, 14, 10, 16], 0),
+      waterLabel("water-line", "water_name", 5, ["all", LINE, HAS_NAME], true, 14, 420),
+      waterLabel(
+        "waterway-river",
+        "waterway",
+        8,
+        ["all", LINE, ["==", ["get", "class"], "river"], HAS_NAME],
+        true,
+        13,
+        360,
+      ),
+      waterLabel(
+        "waterway-stream",
+        "waterway",
+        12,
+        ["all", LINE, ["in", ["get", "class"], ["literal", ["stream", "canal"]]], HAS_NAME],
+        true,
+        12,
+        280,
+      ),
+      {
+        id: "contour-label",
+        type: "symbol",
+        source: "contours",
+        "source-layer": "contours",
+        minzoom: 12,
+        filter: [">", ["get", "level"], 0],
+        paint: {
+          "text-color": "#5c3d28",
+          "text-halo-color": HALO,
+          "text-halo-width": 1.4,
+        },
+        layout: {
+          "symbol-placement": "line",
+          "symbol-spacing": 180,
+          "text-size": 12,
+          "text-font": [LABEL],
+          "text-field": contourLabelField(units),
+          "text-padding": 2,
+          "text-max-angle": 80,
+        },
+      },
     ],
+  };
+}
+
+function placeLabel(
+  id: string,
+  minzoom: number,
+  filter: ExpressionSpecification,
+  stops: number[],
+  color: string,
+  padding: number,
+): StyleSpecification["layers"][number] {
+  return {
+    id,
+    type: "symbol",
+    source: "ofm",
+    "source-layer": "place",
+    minzoom,
+    filter,
+    layout: {
+      "text-field": NAME,
+      "text-font": [LABEL],
+      "text-size": ["interpolate", ["linear"], ["zoom"], ...stops],
+      "text-max-width": 9,
+      "text-padding": padding,
+      "symbol-sort-key": ["coalesce", ["get", "rank"], 20],
+    },
+    paint: {
+      "text-color": color,
+      "text-halo-color": HALO,
+      "text-halo-width": 1.6,
+      "text-halo-blur": 0.2,
+    },
+  };
+}
+
+function roadLabel(
+  id: string,
+  minzoom: number,
+  classes: string[],
+  allowRef: boolean,
+  stops: number[],
+  spacing: number,
+): StyleSpecification["layers"][number] {
+  return {
+    id,
+    type: "symbol",
+    source: "ofm",
+    "source-layer": "transportation_name",
+    minzoom,
+    filter: [
+      "all",
+      LINE,
+      ["in", ["get", "class"], ["literal", classes]],
+      allowRef ? ["any", ["has", "name_en"], ["has", "name"], ["has", "ref"]] : HAS_NAME,
+    ],
+    layout: {
+      "symbol-placement": "line",
+      "symbol-spacing": spacing,
+      "text-field": allowRef ? ROAD_NAME : NAME,
+      "text-font": [LABEL],
+      "text-size": ["interpolate", ["linear"], ["zoom"], ...stops],
+      "text-max-angle": 55,
+      "text-padding": 2,
+    },
+    paint: {
+      "text-color": "#2c261f",
+      "text-halo-color": HALO,
+      "text-halo-width": 1.4,
+      "text-halo-blur": 0.2,
+    },
+  };
+}
+
+function waterLabel(
+  id: string,
+  sourceLayer: "water_name" | "waterway",
+  minzoom: number,
+  filter: ExpressionSpecification,
+  alongLine: boolean,
+  size: number | number[],
+  spacing: number,
+): StyleSpecification["layers"][number] {
+  return {
+    id,
+    type: "symbol",
+    source: "ofm",
+    "source-layer": sourceLayer,
+    minzoom,
+    filter,
+    layout: {
+      "text-field": NAME,
+      "text-font": [LABEL_ITALIC],
+      "text-size": Array.isArray(size) ? ["interpolate", ["linear"], ["zoom"], ...size] : size,
+      "text-letter-spacing": 0.12,
+      "text-max-width": 10,
+      "text-padding": 2,
+      ...(alongLine
+        ? {
+            "symbol-placement": "line" as const,
+            "symbol-spacing": spacing,
+            "text-max-angle": 50,
+          }
+        : {}),
+    },
+    paint: {
+      "text-color": "#134e64",
+      "text-halo-color": HALO,
+      "text-halo-width": 1.5,
+      "text-halo-blur": 0.2,
+    },
   };
 }
 
