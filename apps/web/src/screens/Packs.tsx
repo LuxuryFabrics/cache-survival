@@ -33,7 +33,10 @@ function downloadFailure(error: string): string {
   if (error.includes("AIRGAP")) return "Air-gap blocked this. Tap Retry to open the network and start it.";
   if (error.includes("404")) return "That file is no longer at the published link.";
   if (error.includes("Failed to fetch") || error.includes("NetworkError")) return "The phone could not reach the file. Stay on Wi-Fi and tap Retry.";
-  if (error.includes("lost its place")) return error;
+  if (error.includes("lost its place") || error.includes("restarted the download")) return error;
+  if (error.includes("preparing Blob") || error.includes("object store")) {
+    return "The browser blocked saving the model. Retry once. If it still fails, leave private browsing and try again.";
+  }
   return error;
 }
 

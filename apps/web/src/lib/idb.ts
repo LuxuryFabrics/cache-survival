@@ -5,7 +5,7 @@ const VERSION = 2;
 
 export type CacheDB = IDBPDatabase<{
   kv: { key: string; value: unknown };
-  blobs: { key: string; value: Blob };
+  blobs: { key: string; value: ArrayBuffer | Blob };
   tiles: { key: string; value: ArrayBuffer };
 }>;
 
@@ -41,12 +41,36 @@ export async function kvKeys(prefix?: string): Promise<string[]> {
   return prefix ? keys.filter((k) => k.startsWith(prefix)) : keys;
 }
 
+function asArrayBuffer(value: ArrayBuffer | ArrayBufferView | Blob): Promise<ArrayBuffer> | ArrayBuffer {
+  if (value instanceof ArrayBuffer) return value;
+  if (ArrayBuffer.isView(value)) {
+    return value.buffer.slice(value.byteOffset, value.byteOffset + value.byteLength) as ArrayBuffer;
+  }
+  return value.arrayBuffer();
+}
+
+/** Read raw bytes. Blobs are accepted so a download saved by an older build still resumes. */
+export async function bytesGet(id: string): Promise<ArrayBuffer | undefined> {
+  const value = (await (await db()).get("blobs", id)) as ArrayBuffer | ArrayBufferView | Blob | undefined;
+  if (!value) return undefined;
+  return asArrayBuffer(value);
+}
+
+/** Persist bytes, not a Blob. WebKit rejects Blob/File values in this store. */
+export async function bytesSet(id: string, data: ArrayBuffer): Promise<void> {
+  await (await db()).put("blobs", data, id);
+}
+
 export async function blobGet(id: string): Promise<Blob | undefined> {
-  return (await db()).get("blobs", id) as Promise<Blob | undefined>;
+  const value = (await (await db()).get("blobs", id)) as ArrayBuffer | ArrayBufferView | Blob | undefined;
+  if (!value) return undefined;
+  if (value instanceof Blob) return value;
+  const bytes = await asArrayBuffer(value);
+  return new Blob([bytes]);
 }
 
 export async function blobSet(id: string, blob: Blob): Promise<void> {
-  await (await db()).put("blobs", blob, id);
+  await bytesSet(id, await blob.arrayBuffer());
 }
 
 export async function blobDel(id: string): Promise<void> {

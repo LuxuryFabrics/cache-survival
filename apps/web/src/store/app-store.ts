@@ -22,8 +22,8 @@ import {
   type SavedPlace,
   type UserFile,
 } from "@cache/core";
-import { discardDownload } from "../lib/downloader";
-import { kvGet, kvSet, estimateUsageMb, blobDel } from "../lib/idb";
+import { deleteStoredModel, discardDownload } from "../lib/downloader";
+import { kvGet, kvSet, estimateUsageMb } from "../lib/idb";
 import { createWllamaAdapter } from "../lib/wllama";
 
 export type Screen =
@@ -380,8 +380,8 @@ export function setInstall(status: InstallStatus): void {
 
 export async function forgetPack(id: string): Promise<void> {
   const spec = ALL_MODELS.find((m) => m.id === id);
-  await discardDownload(id);
-  if (spec) await blobDel(`file:${spec.filename}`).catch(() => undefined);
+  if (spec) await deleteStoredModel(id, spec.filename);
+  else await discardDownload(id);
   const installs = { ...state.installs };
   delete installs[id];
   const settings =

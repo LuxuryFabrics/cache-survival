@@ -1,4 +1,5 @@
 import type { LlmAdapter } from "@cache/core";
+import { readStoredModel } from "./downloader";
 import { blobGet } from "./idb";
 import { optionalImport } from "./optional-import";
 
@@ -7,7 +8,7 @@ import { optionalImport } from "./optional-import";
  * Native hosts (llama.rn / Tauri sidecar) implement the same LlmAdapter.
  */
 export async function createWllamaAdapter(modelId: string, filename: string): Promise<LlmAdapter | null> {
-  const blob = (await blobGet(`file:${filename}`)) ?? (await blobGet(filename));
+  const blob = (await readStoredModel(filename)) ?? (await blobGet(`file:${filename}`)) ?? (await blobGet(filename));
   if (!blob) return { id: modelId, ready: false, async generate() { return ""; } };
 
   try {
