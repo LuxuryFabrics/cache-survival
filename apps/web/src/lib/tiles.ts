@@ -29,9 +29,11 @@ export const SAT_PROTOCOL = "sat";
 export const SAT_TILE_TEMPLATE =
   "https://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryOnly/MapServer/tile/{z}/{y}/{x}";
 export const SAT_SOURCE_MAX_Z = 16;
-/** State packs stop at the finest zoom that stays under the cap, and never past 13. */
-export const SAT_STATE_MAX_Z = 13;
-export const SAT_CAP = 8000;
+/** Finest zoom a state pack may include. Usable USGS imagery stops at 16. */
+export const SAT_STATE_MAX_Z = SAT_SOURCE_MAX_Z;
+/** Lowest zoom offered in the picker. Coarser levels are still stored underneath it. */
+export const SAT_ZOOM_MIN = 6;
+export const SAT_CAP = 16_000;
 /** Typical USGS JPEG size, used only for the download hint. */
 export const SAT_JPEG_KB = 27;
 
@@ -225,20 +227,45 @@ export function planSave(
 export type ImageryPlan = { maxZ: number; count: number };
 
 /**
- * Zoom 0 through the finest level at or below {@link SAT_STATE_MAX_Z}
- * whose running total stays within the cap. One zoom level too many is dropped
- * entirely so a state is not a sparse mix of scales.
+ * Zoom 0 through each listed level, dropping the first level that would pass the cap.
+ * A pack is a full pyramid, so choosing zoom 12 still stores zooms 0–12.
  */
-export function planStateImagery(bbox: BBox, cap = SAT_CAP): ImageryPlan {
-  let maxZ = 0;
+export function imageryChoices(
+  bbox: BBox,
+  cap = SAT_CAP,
+  maxZoom = SAT_STATE_MAX_Z,
+  minZoom = SAT_ZOOM_MIN,
+): ImageryPlan[] {
+  const choices: ImageryPlan[] = [];
   let count = 0;
-  for (let z = 0; z <= SAT_STATE_MAX_Z; z++) {
+  let reached = -1;
+  for (let z = 0; z <= maxZoom; z++) {
     const n = countTilesForBbox(bbox, z);
     if (count + n > cap) break;
     count += n;
-    maxZ = z;
+    reached = z;
+    if (z >= minZoom) choices.push({ maxZ: z, count });
   }
-  return { maxZ, count };
+  if (choices.length === 0 && reached >= 0) choices.push({ maxZ: reached, count });
+  return choices;
+}
+
+/** Finest pack that stays within the cap. */
+export function planStateImagery(bbox: BBox, cap = SAT_CAP, maxZoom = SAT_STATE_MAX_Z): ImageryPlan {
+  const choices = imageryChoices(bbox, cap, maxZoom, 0);
+  return choices[choices.length - 1] ?? { maxZ: 0, count: 0 };
+}
+
+/** Keep a chosen zoom when that state can store it; otherwise the finest pack that fits. */
+export function imageryChoiceFor(choices: ImageryPlan[], zoom: number | null): ImageryPlan | null {
+  if (choices.length === 0) return null;
+  if (zoom == null) return choices[choices.length - 1] ?? null;
+  return (
+    choices.find((choice) => choice.maxZ === zoom) ??
+    [...choices].reverse().find((choice) => choice.maxZ <= zoom) ??
+    choices[choices.length - 1] ??
+    null
+  );
 }
 
 export function tilesForImagery(bbox: BBox, maxZ: number): TileCoord[] {

@@ -7,6 +7,8 @@ import {
   demRemoteUrl,
   DETAIL_MAX_Z,
   formatImageryMb,
+  imageryChoiceFor,
+  imageryChoices,
   lonToTileX,
   latToTileY,
   parseDemPath,
@@ -128,6 +130,7 @@ describe("tile math", () => {
     );
     expect(formatImageryMb(70)).toBe("1.8 MB");
     expect(formatImageryMb(8000)).toBe("211 MB");
+    expect(formatImageryMb(16000)).toBe("422 MB");
   });
 
   it("plans a state imagery pack under the cap, including antimeridian Alaska", () => {
@@ -147,8 +150,19 @@ describe("tile math", () => {
         expect(plan.count + countTilesForBbox(state.bbox, plan.maxZ + 1), state.id).toBeGreaterThan(SAT_CAP);
       }
     }
-    expect(planStateImagery(US_STATES.find((state) => state.id === "DC")!.bbox).maxZ).toBe(13);
+    const dc = US_STATES.find((state) => state.id === "DC")!;
+    const dcChoices = imageryChoices(dc.bbox);
+    expect(dcChoices.map((choice) => choice.maxZ)).toEqual([6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]);
+    expect(dcChoices[dcChoices.length - 1]).toEqual({ maxZ: 16, count: 2611 });
+    expect(imageryChoiceFor(dcChoices, null)?.maxZ).toBe(16);
+    expect(imageryChoiceFor(dcChoices, 12)?.count).toBe(tilesForImagery(dc.bbox, 12).length);
+    expect(imageryChoiceFor(dcChoices, 12)?.maxZ).toBe(12);
+    const texas = imageryChoices(US_STATES.find((state) => state.id === "TX")!.bbox);
+    expect(texas[texas.length - 1]?.maxZ).toBe(11);
+    expect(imageryChoiceFor(texas, 16)?.maxZ).toBe(11);
+    expect(planStateImagery(dc.bbox).maxZ).toBe(16);
     expect(planStateImagery(US_STATES.find((state) => state.id === "TX")!.bbox).maxZ).toBe(11);
+    expect(planStateImagery(US_STATES.find((state) => state.id === "NY")!.bbox).maxZ).toBe(12);
     expect(planStateImagery(US_STATES.find((state) => state.id === "AK")!.bbox).maxZ).toBe(9);
     expect(stateAt(38.9072, -77.0369)?.id).toBe("DC");
     expect(stateAt(39.29, -76.61)?.id).toBe("MD");

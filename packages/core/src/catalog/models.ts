@@ -220,7 +220,7 @@ export const MAP_PACKS: DataPackSpec[] = [
     name: "Topo, streets & water",
     kind: "maps",
     description:
-      "Default map is topographic: shaded relief and contours from Mapzen/AWS terrain tiles, plus OpenStreetMap streets, water, and buildings via OpenFreeMap (z0–14). Satellite is optional USGS orthoimagery, downloaded one state at a time into the same cache. Tiles cache in IndexedDB as you pan. Save this view keeps that area, including elevation, for air-gap use. Cache only the regions you need — do not bake a planetary tileset into the app.",
+      "Default map is topographic: shaded relief and contours from Mapzen/AWS terrain tiles, plus OpenStreetMap streets, water, and buildings via OpenFreeMap (z0–14). Satellite is optional USGS orthoimagery: pick a state and a zoom, and the download stays under about 16,000 images. Tiles cache in IndexedDB as you pan. Save this view keeps that area, including elevation, for air-gap use. Cache only the regions you need — do not bake a planetary tileset into the app.",
     license: "ODbL via OpenFreeMap; terrain © Mapzen / AWS Open Data; imagery public domain (USGS)",
     recommended: true,
     filename: "ofm-tiles-idb",

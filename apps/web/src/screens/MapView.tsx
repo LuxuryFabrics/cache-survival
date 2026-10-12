@@ -21,8 +21,9 @@ import { stateAt, stateById, US_STATES } from "../lib/states";
 import {
   ensureTileProtocol,
   formatImageryMb,
+  imageryChoiceFor,
+  imageryChoices,
   planSave,
-  planStateImagery,
   prefetchAround,
   saveRegion,
   saveSatellite,
@@ -65,6 +66,7 @@ export function MapView() {
   const [satId, setSatId] = useState(
     () => stateAt(s.settings.lastKnown?.lat ?? 39.74, s.settings.lastKnown?.lon ?? -104.99)?.id ?? "CO",
   );
+  const [satZoom, setSatZoom] = useState<number | null>(null);
   const [toolsH, setToolsH] = useState(120);
   const toolsRef = useRef<HTMLDivElement>(null);
   const saveAbort = useRef<AbortController | null>(null);
@@ -438,8 +440,8 @@ export function MapView() {
       setInfo("Unlock air-gap to download imagery.");
       return;
     }
-    const plan = planStateImagery(state.bbox);
-    if (plan.count === 0) {
+    const plan = imageryChoiceFor(imageryChoices(state.bbox), satZoom);
+    if (!plan || plan.count === 0) {
       setInfo("That state has no imagery tiles under the size cap.");
       return;
     }
@@ -466,7 +468,8 @@ export function MapView() {
   }
 
   const satState = stateById(satId) ?? US_STATES[0];
-  const imagery = satState ? planStateImagery(satState.bbox) : null;
+  const imageryChoicesForState = satState ? imageryChoices(satState.bbox) : [];
+  const imagery = imageryChoiceFor(imageryChoicesForState, satZoom);
   const zoomHint =
     zoom < 6
       ? "Overview — relief, cities, and water"
@@ -587,6 +590,19 @@ export function MapView() {
                 {US_STATES.map((state) => (
                   <option key={state.id} value={state.id}>
                     {state.name}
+                  </option>
+                ))}
+              </select>
+              <select
+                className="select sat-zoom"
+                aria-label="Imagery zoom"
+                value={imagery ? String(imagery.maxZ) : ""}
+                disabled={!!saving || imageryChoicesForState.length === 0}
+                onChange={(e) => setSatZoom(Number(e.target.value))}
+              >
+                {imageryChoicesForState.map((choice) => (
+                  <option key={choice.maxZ} value={choice.maxZ}>
+                    Zoom {choice.maxZ}
                   </option>
                 ))}
               </select>
