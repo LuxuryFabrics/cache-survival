@@ -22,25 +22,38 @@ export function formatDistance(km: number, unit: "km" | "mi"): string {
   return km < 10 ? `${km.toFixed(2)} km` : `${km.toFixed(1)} km`;
 }
 
-export function searchPlaces(places: Place[], query: string, limit = 20): Place[] {
+export function searchPlaces(
+  places: Place[],
+  query: string,
+  limit = 20,
+  near?: { lat: number; lon: number },
+): Place[] {
   const q = query.trim().toLowerCase();
   if (q.length < 2) return [];
-  return places
-    .map((p) => {
-      const name = p.name.toLowerCase();
-      const hay = `${name} ${p.admin.toLowerCase()} ${p.country.toLowerCase()}`;
-      let score = 0;
-      if (name === q) score = 100;
-      else if (name.startsWith(q)) score = 80;
-      else if (name.includes(q)) score = 50;
-      else if (hay.includes(q)) score = 20;
-      if (score > 0) score += Math.min(15, Math.log10(p.population + 10));
-      return { p, score };
-    })
-    .filter((r) => r.score > 0)
-    .sort((a, b) => b.score - a.score)
-    .slice(0, limit)
-    .map((r) => r.p);
+  const ranked: { p: Place; score: number }[] = [];
+  for (const p of places) {
+    const name = p.name.toLowerCase();
+    const hay = `${name} ${p.admin.toLowerCase()} ${p.country.toLowerCase()}`;
+    let match = 0;
+    if (name === q) match = 3;
+    else if (name.startsWith(q)) match = 2;
+    else if (name.includes(q)) match = 1;
+    else if (hay.includes(q)) match = 0.35;
+    else continue;
+    let score = match + Math.log10(p.population + 10);
+    if (near) score += nearBoost(p, near);
+    ranked.push({ p, score });
+  }
+  ranked.sort((a, b) => b.score - a.score || b.p.population - a.p.population);
+  return ranked.slice(0, limit).map((r) => r.p);
+}
+
+/** Prefer towns near the map without letting a hamlet beat a major city. */
+function nearBoost(p: Place, near: { lat: number; lon: number }): number {
+  const latKm = (p.lat - near.lat) * 111;
+  const lonKm = (p.lon - near.lon) * 111 * Math.cos((near.lat * Math.PI) / 180);
+  const km = Math.hypot(latKm, lonKm);
+  return Math.max(0, 2.2 - km / 900);
 }
 
 export function bearingDegrees(from: { lat: number; lon: number }, to: { lat: number; lon: number }): number {

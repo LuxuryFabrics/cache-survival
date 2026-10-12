@@ -15,6 +15,30 @@ describe("places", () => {
     expect(hits.map((h) => h.name)).toContain("Denton");
   });
 
+  it("ranks a large city above a tiny exact name", () => {
+    const hits = searchPlaces(
+      [
+        { id: "a", name: "San", country: "ML", admin: "05", lat: 13.3, lon: -4.9, population: 800, featureClass: "P" },
+        { id: "b", name: "San Antonio", country: "US", admin: "TX", lat: 29.42, lon: -98.49, population: 1_500_000, featureClass: "P" },
+      ],
+      "san",
+    );
+    expect(hits[0].name).toBe("San Antonio");
+  });
+
+  it("lifts a nearby town when the map is already there", () => {
+    const hits = searchPlaces(
+      [
+        { id: "a", name: "Spring", country: "US", admin: "TX", lat: 30.08, lon: -95.42, population: 54000, featureClass: "P" },
+        { id: "b", name: "Springville", country: "US", admin: "UT", lat: 40.16, lon: -111.61, population: 35000, featureClass: "P" },
+      ],
+      "spring",
+      5,
+      { lat: 40.23, lon: -111.66 },
+    );
+    expect(hits[0].name).toBe("Springville");
+  });
+
   it("measures distance and bearing", () => {
     const km = haversineKm(places[0], places[2]);
     expect(km).toBeGreaterThan(7000);

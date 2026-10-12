@@ -392,9 +392,41 @@ textarea {
 .map-canvas { position: absolute; inset: 0; background: #b7d0dc; }
 .map-credit { display: none; margin: 0; }
 .map-tools {
-  position: absolute; z-index: 2; left: 12px; top: 12px; right: 12px;
+  position: absolute; z-index: 5; left: 12px; top: 12px; right: 12px;
   display: flex; gap: 8px; flex-wrap: wrap;
 }
+.map-search { position: relative; flex: 1 1 220px; min-width: 0; }
+.map-suggest {
+  position: absolute;
+  z-index: 6;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  max-height: min(320px, 46vh);
+  overflow: auto;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  padding: 6px;
+}
+.map-suggest p { margin: 0; padding: 10px 12px; }
+.map-suggest button {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: baseline;
+  text-align: left;
+  background: none;
+  border: 0;
+  border-radius: 10px;
+  padding: 10px 12px;
+  min-height: 44px;
+  color: inherit;
+}
+.map-suggest button.on { background: var(--bg-row); }
+.map-suggest button strong { font-size: 14px; }
+.map-suggest button .muted { font-size: 12px; white-space: nowrap; }
 .map-popup { position: absolute; z-index: 3; left: 12px; bottom: 12px; right: 12px; }
 .map-hud {
   position: absolute;
@@ -615,7 +647,10 @@ textarea {
     flex-wrap: nowrap;
     align-items: stretch;
   }
+  .map-search { flex: none; width: 100%; }
   .map-tools .input { min-width: 0; }
+  .map-suggest button { align-items: flex-start; }
+  .map-suggest button .muted { white-space: normal; }
   .map-actions {
     display: flex;
     flex-wrap: wrap;

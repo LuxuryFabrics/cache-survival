@@ -31,8 +31,11 @@ export function MapView() {
   const ref = useRef<HTMLDivElement>(null);
   const mapRef = useRef<maplibregl.Map | null>(null);
   const scaleRef = useRef<maplibregl.ScaleControl | null>(null);
+  const searchRef = useRef<HTMLDivElement>(null);
   const [q, setQ] = useState("");
   const [hits, setHits] = useState<Place[]>([]);
+  const [suggestOpen, setSuggestOpen] = useState(false);
+  const [active, setActive] = useState(0);
   const [fix, setFix] = useState<{ lat: number; lon: number; label: string } | null>(
     s.settings.lastKnown
       ? { lat: s.settings.lastKnown.lat, lon: s.settings.lastKnown.lon, label: "Last known" }
@@ -136,6 +139,19 @@ export function MapView() {
   }, []);
 
   useEffect(() => {
+    setActive(0);
+  }, [q]);
+
+  useEffect(() => {
+    if (!suggestOpen) return;
+    const onPointer = (event: PointerEvent) => {
+      if (!searchRef.current?.contains(event.target as Node)) setSuggestOpen(false);
+    };
+    document.addEventListener("pointerdown", onPointer);
+    return () => document.removeEventListener("pointerdown", onPointer);
+  }, [suggestOpen]);
+
+  useEffect(() => {
     const map = mapRef.current;
     if (!map?.getLayer("public-fill")) return;
     const vis = showLands ? "visible" : "none";
@@ -223,6 +239,28 @@ export function MapView() {
     void prefetchAround(lat, lon).then(() => void refreshCacheLabel());
   }
 
+  function searchNear() {
+    const center = mapRef.current?.getCenter();
+    if (center) return { lat: center.lat, lon: center.lng };
+    if (fix) return { lat: fix.lat, lon: fix.lon };
+    return undefined;
+  }
+
+  function chooseTown(p: Place) {
+    fly(p.lat, p.lon, p.name);
+    setSuggestOpen(false);
+    setHits([]);
+    setQ(p.name);
+    searchRef.current?.querySelector("input")?.blur();
+  }
+
+  function onSearch(value: string) {
+    setQ(value);
+    const next = searchPlaces(s.places, value, 8, searchNear());
+    setHits(next);
+    setSuggestOpen(value.trim().length >= 2);
+  }
+
   async function copyCoords() {
     if (!fix) return;
     const text = `${fix.lat.toFixed(5)}, ${fix.lon.toFixed(5)}`;
@@ -303,16 +341,65 @@ export function MapView() {
       </div>
       <div className="map-wrap">
         <div className="map-tools">
-          <input
-            className="input"
-            style={{ flex: 1, minWidth: 180 }}
-            placeholder="Search 30k+ towns…"
-            value={q}
-            onChange={(e) => {
-              setQ(e.target.value);
-              setHits(searchPlaces(s.places, e.target.value, 8));
-            }}
-          />
+          <div className="map-search" ref={searchRef}>
+            <input
+              className="input"
+              type="search"
+              enterKeyHint="search"
+              autoComplete="off"
+              autoCorrect="off"
+              autoCapitalize="off"
+              spellCheck={false}
+              aria-label="Search towns"
+              aria-expanded={suggestOpen}
+              aria-controls="map-town-results"
+              placeholder="Search 30k+ towns…"
+              value={q}
+              onChange={(e) => onSearch(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Escape") {
+                  setSuggestOpen(false);
+                  return;
+                }
+                if (!suggestOpen || hits.length === 0) return;
+                if (e.key === "ArrowDown") {
+                  e.preventDefault();
+                  setActive((i) => Math.min(hits.length - 1, i + 1));
+                } else if (e.key === "ArrowUp") {
+                  e.preventDefault();
+                  setActive((i) => Math.max(0, i - 1));
+                } else if (e.key === "Enter") {
+                  e.preventDefault();
+                  const pick = hits[active] ?? hits[0];
+                  if (pick) chooseTown(pick);
+                }
+              }}
+            />
+            {suggestOpen && (
+              <div className="map-suggest" id="map-town-results" role="listbox">
+                {s.places.length === 0 ? (
+                  <p className="muted">Loading towns…</p>
+                ) : hits.length === 0 ? (
+                  <p className="muted">No towns match “{q.trim()}”.</p>
+                ) : (
+                  hits.map((p, i) => (
+                    <button
+                      key={p.id}
+                      type="button"
+                      role="option"
+                      aria-selected={i === active}
+                      className={i === active ? "on" : undefined}
+                      onMouseEnter={() => setActive(i)}
+                      onClick={() => chooseTown(p)}
+                    >
+                      <strong>{p.name}</strong>
+                      <span className="muted">{p.admin} {p.country} · {p.population.toLocaleString()}</span>
+                    </button>
+                  ))
+                )}
+              </div>
+            )}
+          </div>
           <div className="map-actions">
             <button className="btn gps-row" onClick={useGps}>GPS</button>
             <button className="btn" onClick={() => setMeasure(fix ? { lat: fix.lat, lon: fix.lon } : null)}>
@@ -372,25 +459,6 @@ export function MapView() {
               {s.savedPlaces.map((p) => (
                 <button key={p.id} type="button" className="chip" onClick={() => fly(p.lat, p.lon, p.name)}>
                   {p.name}
-                </button>
-              ))}
-            </div>
-          )}
-          {hits.length > 0 && (
-            <div>
-              {hits.map((p) => (
-                <button
-                  key={p.id}
-                  className="list-item"
-                  style={{ width: "100%", background: "none", border: 0, textAlign: "left" }}
-                  onClick={() => {
-                    fly(p.lat, p.lon, p.name);
-                    setHits([]);
-                    setQ(p.name);
-                  }}
-                >
-                  <strong>{p.name}</strong>
-                  <span className="muted">{p.admin} {p.country} · {p.population.toLocaleString()}</span>
                 </button>
               ))}
             </div>

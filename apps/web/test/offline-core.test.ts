@@ -15,7 +15,9 @@ describe("bundled data", () => {
 
   it("ships 30k+ places", () => {
     expect(places.length).toBeGreaterThan(30_000);
-    expect(searchPlaces(places, "denver")[0].name.toLowerCase()).toContain("denver");
+    expect(searchPlaces(places, "denver")[0].name).toBe("Denver");
+    const san = searchPlaces(places, "san", 6).map((p) => p.name);
+    expect(san.some((name) => /san antonio|san diego|santiago/i.test(name))).toBe(true);
   });
 
   it("cuts the Great Lakes out of country land so Michigan stays a peninsula", () => {
