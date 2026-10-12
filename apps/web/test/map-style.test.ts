@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { buildMapStyle } from "../src/lib/map-style";
+import { buildMapStyle, isTileMapError } from "../src/lib/map-style";
 
 describe("map labels", () => {
   it("draws cities, streets, and water names above the roads", () => {
@@ -38,5 +38,18 @@ describe("map labels", () => {
       expect(river.layout?.["text-font"]).toEqual(["Noto Sans Italic"]);
       expect(river["source-layer"]).toBe("waterway");
     }
+  });
+
+  it("hides satellite imagery until it is turned on, above water and below borders", () => {
+    const style = buildMapStyle("mi");
+    const ids = style.layers.map((layer) => layer.id);
+    const sat = ids.indexOf("satellite");
+    expect(sat).toBeGreaterThan(ids.indexOf("ofm-waterway"));
+    expect(sat).toBeLessThan(ids.indexOf("borders"));
+    const layer = style.layers.find((item) => item.id === "satellite");
+    expect(layer?.type).toBe("raster");
+    if (layer?.type === "raster") expect(layer.layout?.visibility).toBe("none");
+    expect(style.sources.sat).toMatchObject({ type: "raster", maxzoom: 16, tileSize: 256 });
+    expect(isTileMapError("missing", "sat")).toBe(true);
   });
 });

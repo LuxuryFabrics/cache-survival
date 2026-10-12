@@ -126,6 +126,7 @@ The default map is topographic. Shaded relief and elevation color come from [Map
 
 - Terrain and street tiles write through to IndexedDB as you browse
 - **Save this view** keeps the current area (street detail z8–14, capped at ~4,000 street tiles, plus elevation for that area) for air-gap use
+- **Satellite** downloads USGS orthoimagery for one state, DC, or Puerto Rico (public domain). Each pack stores zoom 0 through the finest level that stays under about 8,000 images, and the button shows that zoom and size first. Shaded relief shows through where an image is not cached
 - After **Lock air-gap**, only cached tiles render — zoom a saved town and the relief, contours, and streets stay
 - Sources: OpenStreetMap (ODbL) via OpenFreeMap / OpenMapTiles; terrain tiles © Mapzen, AWS Open Data
 - Do not bake a planetary tileset into the base APK

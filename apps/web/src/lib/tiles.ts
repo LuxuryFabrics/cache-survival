@@ -20,6 +20,20 @@ export const TILE_CAP = 4000;
 export const DETAIL_MIN_Z = 8;
 export const DETAIL_MAX_Z = 14;
 export const SEARCH_ZOOM = 12;
+export const SAT_PROTOCOL = "sat";
+/**
+ * USGS Imagery Only (public domain). The service lists finer levels, but
+ * usable orthoimagery stops at 16. ArcGIS order is z/y/x, not z/x/y.
+ * Esri World Imagery is not used here; its terms forbid a bulk offline cache.
+ */
+export const SAT_TILE_TEMPLATE =
+  "https://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryOnly/MapServer/tile/{z}/{y}/{x}";
+export const SAT_SOURCE_MAX_Z = 16;
+/** State packs stop at the finest zoom that stays under the cap, and never past 13. */
+export const SAT_STATE_MAX_Z = 13;
+export const SAT_CAP = 8000;
+/** Typical USGS JPEG size, used only for the download hint. */
+export const SAT_JPEG_KB = 27;
 
 export type TileCoord = { z: number; x: number; y: number };
 export type BBox = { west: number; south: number; east: number; north: number };
@@ -40,6 +54,20 @@ export function demKey(t: TileCoord): string {
 
 export function demRemoteUrl(t: TileCoord): string {
   return DEM_TILE_TEMPLATE.replace("{z}", String(t.z)).replace("{x}", String(t.x)).replace("{y}", String(t.y));
+}
+
+export function satKey(t: TileCoord): string {
+  return `sat/${t.z}/${t.x}/${t.y}`;
+}
+
+/** OSM z/x/y in, USGS z/y/x out. */
+export function satRemoteUrl(t: TileCoord): string {
+  return SAT_TILE_TEMPLATE.replace("{z}", String(t.z)).replace("{y}", String(t.y)).replace("{x}", String(t.x));
+}
+
+export function formatImageryMb(count: number): string {
+  const mb = (count * SAT_JPEG_KB) / 1024;
+  return mb < 10 ? `${mb.toFixed(1)} MB` : `${Math.round(mb)} MB`;
 }
 
 export function parseDemPath(url: string): TileCoord | null {
@@ -108,36 +136,48 @@ export function latToTileY(lat: number, z: number): number {
   return Math.min(n - 1, Math.max(0, y));
 }
 
-export function countTilesForBbox(bbox: BBox, z: number): number {
+/** Columns covered by the box. Antimeridian boxes (west > east) wrap, without listing a tile twice. */
+function tileXs(bbox: BBox, z: number): number[] {
   const n = 2 ** z;
   const x0 = lonToTileX(bbox.west, z);
   const x1 = lonToTileX(bbox.east, z);
-  const y0 = latToTileY(bbox.north, z);
-  const y1 = latToTileY(bbox.south, z);
-  const dx = bbox.west <= bbox.east ? Math.abs(x1 - x0) + 1 : n - x0 + x1 + 1;
-  const dy = Math.abs(y1 - y0) + 1;
-  return dx * dy;
-}
-
-export function tilesForBbox(bbox: BBox, z: number): TileCoord[] {
-  const n = 2 ** z;
-  const x0 = lonToTileX(bbox.west, z);
-  const x1 = lonToTileX(bbox.east, z);
-  const y0 = latToTileY(bbox.north, z);
-  const y1 = latToTileY(bbox.south, z);
-  const xs: number[] = [];
   if (bbox.west <= bbox.east) {
     const lo = Math.min(x0, x1);
     const hi = Math.max(x0, x1);
+    const xs: number[] = [];
     for (let x = lo; x <= hi; x++) xs.push(x);
-  } else {
-    for (let x = x0; x < n; x++) xs.push(x);
-    for (let x = 0; x <= x1; x++) xs.push(x);
+    return xs;
   }
-  const yMin = Math.min(y0, y1);
-  const yMax = Math.max(y0, y1);
+  const xs: number[] = [];
+  const seen = new Set<number>();
+  for (let x = x0; x < n; x++) {
+    if (seen.has(x)) continue;
+    seen.add(x);
+    xs.push(x);
+  }
+  for (let x = 0; x <= x1; x++) {
+    if (seen.has(x)) continue;
+    seen.add(x);
+    xs.push(x);
+  }
+  return xs;
+}
+
+function tileYRange(bbox: BBox, z: number): { yMin: number; yMax: number } {
+  const y0 = latToTileY(bbox.north, z);
+  const y1 = latToTileY(bbox.south, z);
+  return { yMin: Math.min(y0, y1), yMax: Math.max(y0, y1) };
+}
+
+export function countTilesForBbox(bbox: BBox, z: number): number {
+  const { yMin, yMax } = tileYRange(bbox, z);
+  return tileXs(bbox, z).length * (yMax - yMin + 1);
+}
+
+export function tilesForBbox(bbox: BBox, z: number): TileCoord[] {
+  const { yMin, yMax } = tileYRange(bbox, z);
   const out: TileCoord[] = [];
-  for (const x of xs) {
+  for (const x of tileXs(bbox, z)) {
     for (let y = yMin; y <= yMax; y++) out.push({ z, x, y });
   }
   return out;
@@ -157,7 +197,12 @@ export function tilesForRegion(bbox: BBox, minZ: number, maxZ: number, cap = TIL
 }
 
 /** Prefer detail tiles for the visible box; refuse continent-scale saves. */
-export function planSave(bbox: BBox, viewZoom: number, cap = TILE_CAP): SavePlan {
+export function planSave(
+  bbox: BBox,
+  viewZoom: number,
+  cap = TILE_CAP,
+  opts?: { satellite?: boolean },
+): SavePlan {
   if (countTilesForBbox(bbox, DETAIL_MAX_Z) > cap) {
     return {
       ok: false,
@@ -173,7 +218,33 @@ export function planSave(bbox: BBox, viewZoom: number, cap = TILE_CAP): SavePlan
   };
   while (minZ < maxZ && totalFrom(minZ) > cap) minZ += 1;
   const saved = tilesForSave(bbox, minZ, maxZ);
-  return { ok: true, minZ, maxZ, count: saved.vector.length + saved.dem.length };
+  const count = saved.vector.length + saved.dem.length + (opts?.satellite ? saved.vector.length : 0);
+  return { ok: true, minZ, maxZ, count };
+}
+
+export type ImageryPlan = { maxZ: number; count: number };
+
+/**
+ * Zoom 0 through the finest level at or below {@link SAT_STATE_MAX_Z}
+ * whose running total stays within the cap. One zoom level too many is dropped
+ * entirely so a state is not a sparse mix of scales.
+ */
+export function planStateImagery(bbox: BBox, cap = SAT_CAP): ImageryPlan {
+  let maxZ = 0;
+  let count = 0;
+  for (let z = 0; z <= SAT_STATE_MAX_Z; z++) {
+    const n = countTilesForBbox(bbox, z);
+    if (count + n > cap) break;
+    count += n;
+    maxZ = z;
+  }
+  return { maxZ, count };
+}
+
+export function tilesForImagery(bbox: BBox, maxZ: number): TileCoord[] {
+  const out: TileCoord[] = [];
+  for (let z = 0; z <= maxZ; z++) out.push(...tilesForBbox(bbox, z));
+  return out;
 }
 
 export function bboxAround(lat: number, lon: number, km = 8): BBox {
@@ -204,6 +275,30 @@ export async function loadTile(t: TileCoord, signal?: AbortSignal): Promise<Arra
     /* quota — still return the tile this session */
   }
   return data;
+}
+
+function isJpeg(data: ArrayBuffer): boolean {
+  if (data.byteLength < 4) return false;
+  const b = new Uint8Array(data, 0, 3);
+  return b[0] === 0xff && b[1] === 0xd8 && b[2] === 0xff;
+}
+
+export async function loadSatTile(t: TileCoord, signal?: AbortSignal): Promise<ArrayBuffer> {
+  installDemFetch();
+  const key = satKey(t);
+  const cached = await tileGet(key);
+  if (cached) return cached.slice(0);
+  if (airgap.getState().locked) throw new Error("AIRGAP: tile cache miss");
+  const res = await remoteFetch(satRemoteUrl(t), { signal });
+  if (!res.ok) throw new Error(`tile ${res.status}`);
+  const data = await res.arrayBuffer();
+  if (!isJpeg(data)) throw new Error("tile not jpeg");
+  try {
+    await tileSet(key, data.slice(0));
+  } catch {
+    /* quota — still return the tile this session */
+  }
+  return data.slice(0);
 }
 
 export async function loadDemTile(t: TileCoord, signal?: AbortSignal): Promise<ArrayBuffer> {
@@ -258,30 +353,30 @@ export function ensureTileProtocol(): void {
     const data = await loadTile(coord, abort.signal);
     return { data };
   });
+  maplibregl.addProtocol(SAT_PROTOCOL, async (params, abort) => {
+    const coord = parseTileUrl(params.url);
+    if (!coord) throw new Error("bad sat url");
+    const data = await loadSatTile(coord, abort.signal);
+    return { data };
+  });
 }
 
-export async function saveRegion(
-  bbox: BBox,
+type CacheJob = { kind: "ofm" | "dem" | "sat"; t: TileCoord };
+
+async function cacheJobs(
+  jobs: CacheJob[],
   opts: {
-    minZ?: number;
-    maxZ?: number;
     onProgress?: (done: number, total: number) => void;
     signal?: AbortSignal;
-  } = {},
+    concurrency?: number;
+  },
 ): Promise<{ saved: number; cached: number; failed: number; total: number }> {
-  const minZ = opts.minZ ?? DETAIL_MIN_Z;
-  const maxZ = opts.maxZ ?? DETAIL_MAX_Z;
-  const { vector, dem } = tilesForSave(bbox, minZ, maxZ);
-  const jobs: Array<{ kind: "ofm" | "dem"; t: TileCoord }> = [
-    ...vector.map((t) => ({ kind: "ofm" as const, t })),
-    ...dem.map((t) => ({ kind: "dem" as const, t })),
-  ];
   let saved = 0;
   let cached = 0;
   let failed = 0;
   const total = jobs.length;
   let i = 0;
-  const concurrency = 6;
+  const concurrency = Math.max(1, opts.concurrency ?? 6);
 
   async function worker() {
     while (i < jobs.length) {
@@ -289,21 +384,56 @@ export async function saveRegion(
       const job = jobs[i++];
       if (!job) return;
       try {
-        const key = job.kind === "dem" ? demKey(job.t) : tileKey(job.t);
+        const key = job.kind === "dem" ? demKey(job.t) : job.kind === "sat" ? satKey(job.t) : tileKey(job.t);
         const existing = await tileGet(key);
         if (existing) cached += 1;
         else if (job.kind === "dem") await loadDemTile(job.t, opts.signal);
+        else if (job.kind === "sat") await loadSatTile(job.t, opts.signal);
         else await loadTile(job.t, opts.signal);
         if (!existing) saved += 1;
       } catch {
+        if (opts.signal?.aborted) return;
         failed += 1;
       }
       opts.onProgress?.(saved + cached + failed, total);
     }
   }
 
-  await Promise.all(Array.from({ length: concurrency }, () => worker()));
+  await Promise.all(Array.from({ length: Math.min(concurrency, Math.max(1, jobs.length)) }, () => worker()));
   return { saved, cached, failed, total };
+}
+
+export async function saveRegion(
+  bbox: BBox,
+  opts: {
+    minZ?: number;
+    maxZ?: number;
+    satellite?: boolean;
+    onProgress?: (done: number, total: number) => void;
+    signal?: AbortSignal;
+  } = {},
+): Promise<{ saved: number; cached: number; failed: number; total: number }> {
+  const minZ = opts.minZ ?? DETAIL_MIN_Z;
+  const maxZ = opts.maxZ ?? DETAIL_MAX_Z;
+  const { vector, dem } = tilesForSave(bbox, minZ, maxZ);
+  const jobs: CacheJob[] = [
+    ...vector.map((t) => ({ kind: "ofm" as const, t })),
+    ...dem.map((t) => ({ kind: "dem" as const, t })),
+    ...(opts.satellite ? vector.map((t) => ({ kind: "sat" as const, t })) : []),
+  ];
+  return cacheJobs(jobs, { onProgress: opts.onProgress, signal: opts.signal, concurrency: opts.satellite ? 4 : 6 });
+}
+
+export async function saveSatellite(
+  bbox: BBox,
+  opts: {
+    maxZ: number;
+    onProgress?: (done: number, total: number) => void;
+    signal?: AbortSignal;
+  },
+): Promise<{ saved: number; cached: number; failed: number; total: number }> {
+  const jobs: CacheJob[] = tilesForImagery(bbox, opts.maxZ).map((t) => ({ kind: "sat" as const, t }));
+  return cacheJobs(jobs, { onProgress: opts.onProgress, signal: opts.signal, concurrency: 4 });
 }
 
 export async function prefetchAround(lat: number, lon: number, km = 6): Promise<void> {

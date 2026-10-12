@@ -1,4 +1,5 @@
 import {
+  airgap,
   bearingDegrees,
   compassLabel,
   describeLand,
@@ -16,15 +17,22 @@ import "maplibre-gl/dist/maplibre-gl.css";
 import { useEffect, useRef, useState } from "react";
 import { consumeMapFocus, deletePlace, savePlace, sendPrompt, setScreen, updateSettings, useCache } from "../hooks";
 import { buildMapStyle, contourLabelField, isTileMapError } from "../lib/map-style";
+import { stateAt, stateById, US_STATES } from "../lib/states";
 import {
   ensureTileProtocol,
+  formatImageryMb,
   planSave,
+  planStateImagery,
   prefetchAround,
   saveRegion,
+  saveSatellite,
   SEARCH_ZOOM,
+  TILE_CAP,
   tileStats,
   type BBox,
 } from "../lib/tiles";
+
+type SaveJob = { done: number; total: number; title: string; detail: string };
 
 export function MapView() {
   const s = useCache();
@@ -49,9 +57,18 @@ export function MapView() {
   const [probed, setProbed] = useState(false);
   const [zoom, setZoom] = useState(2.2);
   const [cacheLabel, setCacheLabel] = useState("");
-  const [saving, setSaving] = useState<{ done: number; total: number } | null>(null);
+  const [saving, setSaving] = useState<SaveJob | null>(null);
   const [narrow, setNarrow] = useState(false);
   const [keyOpen, setKeyOpen] = useState(false);
+  const [showSat, setShowSat] = useState(false);
+  const [satTouched, setSatTouched] = useState(false);
+  const [satId, setSatId] = useState(
+    () => stateAt(s.settings.lastKnown?.lat ?? 39.74, s.settings.lastKnown?.lon ?? -104.99)?.id ?? "CO",
+  );
+  const [toolsH, setToolsH] = useState(120);
+  const toolsRef = useRef<HTMLDivElement>(null);
+  const saveAbort = useRef<AbortController | null>(null);
+  const saveLock = useRef(false);
 
   useEffect(() => {
     if (!ref.current || mapRef.current) return;
@@ -160,6 +177,25 @@ export function MapView() {
   }, [showLands]);
 
   useEffect(() => {
+    const map = mapRef.current;
+    if (!map) return;
+    const apply = () => {
+      if (!map.getLayer("satellite")) return;
+      map.setLayoutProperty("satellite", "visibility", showSat ? "visible" : "none");
+    };
+    if (map.isStyleLoaded()) apply();
+    else map.once("load", apply);
+  }, [showSat]);
+
+  useEffect(() => () => saveAbort.current?.abort(), []);
+
+  useEffect(() => {
+    if (satTouched || !fix) return;
+    const hit = stateAt(fix.lat, fix.lon);
+    if (hit) setSatId(hit.id);
+  }, [fix, satTouched]);
+
+  useEffect(() => {
     const mq = window.matchMedia("(max-width: 860px)");
     const apply = () => setNarrow(mq.matches);
     apply();
@@ -198,13 +234,23 @@ export function MapView() {
   }, [s.settings.units]);
 
   useEffect(() => {
-    mapRef.current?.setPadding({
-      top: narrow ? 118 : 56,
-      bottom: narrow ? 72 : 96,
-      left: narrow ? 16 : 8,
-      right: narrow ? 52 : 8,
-    });
-  }, [narrow]);
+    const el = toolsRef.current;
+    if (!el) return;
+    const apply = () => {
+      const top = Math.max(narrow ? 96 : 56, el.offsetHeight + 20);
+      mapRef.current?.setPadding({
+        top,
+        bottom: narrow ? 72 : 96,
+        left: narrow ? 16 : 8,
+        right: narrow ? 52 : 8,
+      });
+      setToolsH(12 + el.offsetHeight + 8);
+    };
+    apply();
+    const observer = new ResizeObserver(apply);
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [narrow, showSat]);
 
   useEffect(() => {
     const focus = s.pendingMapFocus;
@@ -289,6 +335,41 @@ export function MapView() {
     );
   }
 
+  function showStateOnMap(bbox: BBox, maxZ: number) {
+    const map = mapRef.current;
+    if (!map) return;
+    if (bbox.west > bbox.east) {
+      const span = 360 - (bbox.west - bbox.east);
+      let lon = bbox.west + span / 2;
+      if (lon > 180) lon -= 360;
+      map.flyTo({ center: [lon, (bbox.south + bbox.north) / 2], zoom: 4, essential: true });
+      return;
+    }
+    map.fitBounds(
+      [
+        [bbox.west, bbox.south],
+        [bbox.east, bbox.north],
+      ],
+      { padding: 32, maxZoom: Math.min(12, maxZ), essential: true },
+    );
+  }
+
+  function startSaveJob(): AbortSignal | null {
+    if (saveLock.current) return null;
+    saveLock.current = true;
+    saveAbort.current?.abort();
+    const ac = new AbortController();
+    saveAbort.current = ac;
+    return ac.signal;
+  }
+
+  function finishSaveJob(signal: AbortSignal) {
+    if (saveAbort.current?.signal !== signal) return;
+    saveLock.current = false;
+    setSaving(null);
+    void refreshCacheLabel();
+  }
+
   async function saveThisView() {
     const map = mapRef.current;
     const bbox = visibleBbox();
@@ -296,28 +377,69 @@ export function MapView() {
       setInfo("Map is not ready.");
       return;
     }
-    const plan = planSave(bbox, map.getZoom());
+    const plan = planSave(bbox, map.getZoom(), TILE_CAP, { satellite: showSat });
     if (!plan.ok) {
       setInfo(plan.reason);
       return;
     }
-    setSaving({ done: 0, total: plan.count });
+    const signal = startSaveJob();
+    if (!signal) return;
+    const detail = showSat ? "terrain, streets, satellite" : "terrain, streets, OSM";
+    setSaving({ done: 0, total: plan.count, title: "Saving this view", detail });
     try {
       const result = await saveRegion(bbox, {
         minZ: plan.minZ,
         maxZ: plan.maxZ,
-        onProgress: (done, total) => setSaving({ done, total }),
+        satellite: showSat,
+        signal,
+        onProgress: (done, total) => setSaving({ done, total, title: "Saving this view", detail }),
       });
+      if (signal.aborted) return;
       const missed = result.failed ? ` ${result.failed} missed (need network or unlock air-gap).` : "";
       setInfo(`Saved ${result.saved} new tiles, ${result.cached} already on device.${missed}`);
     } catch (err) {
-      setInfo(err instanceof Error ? err.message : "Could not save this view.");
+      if (!signal.aborted) setInfo(err instanceof Error ? err.message : "Could not save this view.");
     } finally {
-      setSaving(null);
-      void refreshCacheLabel();
+      finishSaveJob(signal);
     }
   }
 
+  async function downloadState() {
+    const state = stateById(satId);
+    if (!state) return;
+    if (airgap.getState().locked) {
+      setInfo("Unlock air-gap to download imagery.");
+      return;
+    }
+    const plan = planStateImagery(state.bbox);
+    if (plan.count === 0) {
+      setInfo("That state has no imagery tiles under the size cap.");
+      return;
+    }
+    const signal = startSaveJob();
+    if (!signal) return;
+    setShowSat(true);
+    showStateOnMap(state.bbox, plan.maxZ);
+    const detail = `USGS satellite · through zoom ${plan.maxZ}`;
+    setSaving({ done: 0, total: plan.count, title: state.name, detail });
+    try {
+      const result = await saveSatellite(state.bbox, {
+        maxZ: plan.maxZ,
+        signal,
+        onProgress: (done, total) => setSaving({ done, total, title: state.name, detail }),
+      });
+      if (signal.aborted) return;
+      const missed = result.failed ? ` ${result.failed} missed (need network or unlock air-gap).` : "";
+      setInfo(`${state.name} imagery through zoom ${plan.maxZ}: ${result.saved} new, ${result.cached} already saved.${missed}`);
+    } catch (err) {
+      if (!signal.aborted) setInfo(err instanceof Error ? err.message : "Could not download imagery.");
+    } finally {
+      finishSaveJob(signal);
+    }
+  }
+
+  const satState = stateById(satId) ?? US_STATES[0];
+  const imagery = satState ? planStateImagery(satState.bbox) : null;
   const zoomHint =
     zoom < 6
       ? "Overview — relief, cities, and water"
@@ -340,7 +462,7 @@ export function MapView() {
         </button>
       </div>
       <div className="map-wrap">
-        <div className="map-tools">
+        <div className="map-tools" ref={toolsRef}>
           <div className="map-search" ref={searchRef}>
             <input
               className="input"
@@ -408,13 +530,55 @@ export function MapView() {
             <button className={`chip ${showLands ? "on" : ""}`} onClick={() => setShowLands((v) => !v)}>
               Public land
             </button>
+            <button
+              type="button"
+              className={`chip ${showSat ? "on" : ""}`}
+              aria-pressed={showSat}
+              onClick={() => setShowSat((v) => !v)}
+            >
+              Satellite
+            </button>
             <button className={`chip key-only ${keyOpen ? "on" : ""}`} onClick={() => setKeyOpen((v) => !v)}>
               Key
             </button>
             <button className="btn primary" onClick={() => void saveThisView()} disabled={!!saving}>
-              {saving ? `Saving ${saving.done}/${saving.total}` : "Save view"}
+              {saving?.title === "Saving this view" ? `Saving ${saving.done}/${saving.total}` : "Save view"}
             </button>
           </div>
+          {showSat && satState && imagery && (
+            <div className="sat-panel">
+              <select
+                className="select"
+                aria-label="State imagery"
+                value={satState.id}
+                disabled={!!saving}
+                onChange={(e) => {
+                  setSatTouched(true);
+                  setSatId(e.target.value);
+                }}
+              >
+                {US_STATES.map((state) => (
+                  <option key={state.id} value={state.id}>
+                    {state.name}
+                  </option>
+                ))}
+              </select>
+              <button
+                type="button"
+                className="btn primary"
+                disabled={!!saving || imagery.count === 0}
+                onClick={() => void downloadState()}
+              >
+                {saving && saving.title === satState.name
+                  ? `Downloading ${saving.done}/${saving.total}`
+                  : "Download state"}
+              </button>
+              <p className="muted sat-note">
+                {satState.name} · through zoom {imagery.maxZ} · {imagery.count.toLocaleString()} images · about{" "}
+                {formatImageryMb(imagery.count)}
+              </p>
+            </div>
+          )}
         </div>
         <div className="map-stage">
           <button type="button" className="map-locate" onClick={useGps}>GPS</button>
@@ -426,7 +590,7 @@ export function MapView() {
             </div>
           </div>
           {showLands && (!narrow || keyOpen) && (
-            <div className="land-legend">
+            <div className="land-legend" style={{ top: toolsH }}>
               <div><i className="swatch priv" /> Private / unmapped</div>
               <div><i className="swatch blm" /> BLM</div>
               <div><i className="swatch usfs" /> Forest Service</div>
@@ -436,12 +600,12 @@ export function MapView() {
             </div>
           )}
           {saving && (
-            <div className="map-progress-card card">
-              <strong>Saving this view</strong>
+            <div className="map-progress-card card" style={{ top: toolsH }}>
+              <strong>{saving.title}</strong>
               <div className="progress" style={{ marginTop: 8 }}>
                 <span style={{ width: `${saving.total ? (100 * saving.done) / saving.total : 0}%` }} />
               </div>
-              <p className="muted">{saving.done} / {saving.total} · terrain, streets, OSM</p>
+              <p className="muted">{saving.done} / {saving.total} · {saving.detail}</p>
             </div>
           )}
           {mapError && (
@@ -452,7 +616,10 @@ export function MapView() {
             </div>
           )}
         </div>
-        <p className="map-credit">© OpenFreeMap · OpenMapTiles · OpenStreetMap · Terrain: Mapzen / AWS</p>
+        <p className="map-credit">
+          © OpenFreeMap · OpenMapTiles · OpenStreetMap · Terrain: Mapzen / AWS
+          {showSat ? " · Imagery: USGS" : ""}
+        </p>
         <div className="map-popup card stack">
           {narrow && s.savedPlaces.length > 0 && hits.length === 0 && (
             <div className="map-pins">

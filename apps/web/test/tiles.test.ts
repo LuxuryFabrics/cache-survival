@@ -1,20 +1,29 @@
 import { describe, expect, it } from "vitest";
+import { stateAt, US_STATES } from "../src/lib/states";
 import {
   bboxAround,
   countTilesForBbox,
   demKey,
   demRemoteUrl,
   DETAIL_MAX_Z,
+  formatImageryMb,
   lonToTileX,
   latToTileY,
   parseDemPath,
   parseTileUrl,
   planSave,
+  planStateImagery,
   remoteTileUrl,
+  SAT_CAP,
+  SAT_STATE_MAX_Z,
+  satKey,
+  satRemoteUrl,
   TILE_CAP,
   tileKey,
   tilesForBbox,
+  tilesForImagery,
   tilesForRegion,
+  tilesForSave,
   withHalo,
 } from "../src/lib/tiles";
 
@@ -96,5 +105,57 @@ describe("tile math", () => {
       expect(plan.count).toBeGreaterThan(0);
       expect(plan.count).toBeLessThanOrEqual(TILE_CAP);
     }
+  });
+
+  it("adds satellite tiles to a view save without changing the zoom range", () => {
+    const box = bboxAround(39.7392, -104.9903, 6);
+    const plain = planSave(box, 12);
+    const withSat = planSave(box, 12, TILE_CAP, { satellite: true });
+    expect(plain.ok && withSat.ok).toBe(true);
+    if (!plain.ok || !withSat.ok) return;
+    const saved = tilesForSave(box, plain.minZ, plain.maxZ);
+    expect(withSat.minZ).toBe(plain.minZ);
+    expect(withSat.maxZ).toBe(plain.maxZ);
+    expect(withSat.count).toBe(plain.count + saved.vector.length);
+    expect(planSave({ west: -180, south: -70, east: 180, north: 70 }, 2, TILE_CAP, { satellite: true }).ok).toBe(false);
+  });
+
+  it("requests USGS imagery in ArcGIS z/y/x order", () => {
+    const denver = { z: 12, x: 853, y: 1554 };
+    expect(satKey(denver)).toBe("sat/12/853/1554");
+    expect(satRemoteUrl(denver)).toBe(
+      "https://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryOnly/MapServer/tile/12/1554/853",
+    );
+    expect(formatImageryMb(70)).toBe("1.8 MB");
+    expect(formatImageryMb(8000)).toBe("211 MB");
+  });
+
+  it("plans a state imagery pack under the cap, including antimeridian Alaska", () => {
+    expect(US_STATES).toHaveLength(52);
+    expect(new Set(US_STATES.map((state) => state.id)).size).toBe(52);
+    const alaska = US_STATES.find((state) => state.id === "AK");
+    expect(alaska?.bbox.west).toBeGreaterThan(alaska?.bbox.east ?? 0);
+    expect(tilesForBbox(alaska!.bbox, 0)).toHaveLength(1);
+    for (const state of US_STATES) {
+      const plan = planStateImagery(state.bbox);
+      expect(plan.count, state.id).toBeLessThanOrEqual(SAT_CAP);
+      expect(plan.count, state.id).toBeGreaterThan(0);
+      expect(plan.maxZ, state.id).toBeGreaterThanOrEqual(9);
+      expect(plan.maxZ, state.id).toBeLessThanOrEqual(SAT_STATE_MAX_Z);
+      expect(tilesForImagery(state.bbox, plan.maxZ), state.id).toHaveLength(plan.count);
+      if (plan.maxZ < SAT_STATE_MAX_Z) {
+        expect(plan.count + countTilesForBbox(state.bbox, plan.maxZ + 1), state.id).toBeGreaterThan(SAT_CAP);
+      }
+    }
+    expect(planStateImagery(US_STATES.find((state) => state.id === "DC")!.bbox).maxZ).toBe(13);
+    expect(planStateImagery(US_STATES.find((state) => state.id === "TX")!.bbox).maxZ).toBe(11);
+    expect(planStateImagery(US_STATES.find((state) => state.id === "AK")!.bbox).maxZ).toBe(9);
+    expect(stateAt(38.9072, -77.0369)?.id).toBe("DC");
+    expect(stateAt(39.29, -76.61)?.id).toBe("MD");
+    expect(stateAt(39.7392, -104.9903)?.id).toBe("CO");
+    expect(stateAt(61.2181, -149.9003)?.id).toBe("AK");
+    expect(stateAt(52.9, 172.9)?.id).toBe("AK");
+    expect(stateAt(21.3069, -157.8583)?.id).toBe("HI");
+    expect(stateAt(18.4655, -66.1057)?.id).toBe("PR");
   });
 });

@@ -1,7 +1,7 @@
 import type { ExpressionSpecification, StyleSpecification } from "maplibre-gl";
 import maplibregl from "maplibre-gl";
 import mlcontour from "maplibre-contour";
-import { DEM_LOCAL_TEMPLATE, DEM_MAX_Z, installDemFetch, OFM_PROTOCOL } from "./tiles";
+import { DEM_LOCAL_TEMPLATE, DEM_MAX_Z, installDemFetch, OFM_PROTOCOL, SAT_PROTOCOL, SAT_SOURCE_MAX_Z } from "./tiles";
 
 const MAJOR = ["motorway", "trunk", "primary"] as const;
 const MID = ["secondary", "tertiary"] as const;
@@ -88,6 +88,14 @@ export function buildMapStyle(units: "mi" | "km"): StyleSpecification {
         minzoom: 0,
         maxzoom: 14,
         attribution: "© OpenFreeMap © OpenMapTiles © OpenStreetMap contributors",
+      },
+      sat: {
+        type: "raster",
+        tiles: [`${SAT_PROTOCOL}://{z}/{x}/{y}`],
+        tileSize: 256,
+        minzoom: 0,
+        maxzoom: SAT_SOURCE_MAX_Z,
+        attribution: "USDA, USGS The National Map: Orthoimagery",
       },
     },
     layers: [
@@ -222,6 +230,13 @@ export function buildMapStyle(units: "mi" | "km"): StyleSpecification {
           "line-color": "#6aa4b8",
           "line-width": ["interpolate", ["linear"], ["zoom"], 8, 0.4, 14, 1.8, 16, 2.4],
         },
+      },
+      {
+        id: "satellite",
+        type: "raster",
+        source: "sat",
+        layout: { visibility: "none" },
+        paint: { "raster-opacity": 1, "raster-fade-duration": 0 },
       },
       {
         id: "borders",
@@ -513,8 +528,8 @@ function waterLabel(
 }
 
 export function isTileMapError(message: string, sourceId?: string): boolean {
-  if (sourceId === "ofm" || sourceId === "dem" || sourceId === "contours") return true;
-  return /tile|ofm:|cache-dem|contour|glyph|AIRGAP|404|Failed to fetch|AbortError|NetworkError|tile cache|bad ofm/i.test(
+  if (sourceId === "ofm" || sourceId === "dem" || sourceId === "contours" || sourceId === "sat") return true;
+  return /tile|ofm:|sat:|cache-dem|contour|glyph|AIRGAP|404|Failed to fetch|AbortError|NetworkError|tile cache|bad ofm|bad sat/i.test(
     message,
   );
 }
